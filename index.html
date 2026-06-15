@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VEXOR - Enterprise ITSM Cloud</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        
+        :root {
+            --primary: #0f172a;       /* Deep Slate */
+            --primary-light: #1e293b;
+            --accent: #2563eb;        /* Royal Blue */
+            --accent-hover: #1d4ed8;
+            --bg-body: #f1f5f9;       /* Light Slate */
+            --bg-surface: #ffffff;
+            --text-main: #334155;
+            --text-muted: #64748b;
+            --success: #059669;
+            --warning: #d97706;
+            --danger: #dc2626;
+            --border: #e2e8f0;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        body { background-color: var(--bg-body); color: var(--text-main); height: 100vh; display: flex; overflow: hidden; }
+        
+        /* SCROLLBAR MODERNO */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e0; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+        /* --- LOGIN SCREEN --- */
+        #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary) 0%, #1e3a8a 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        .login-wrapper { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); padding: 48px; border-radius: 24px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: center; }
+        .logo-box { width: 64px; height: 64px; background: var(--accent); border-radius: 16px; margin: 0 auto 24px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 28px; box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.3); }
+        .login-wrapper h2 { color: var(--primary); font-size: 26px; font-weight: 700; margin-bottom: 8px; }
+        .login-wrapper p { color: var(--text-muted); font-size: 15px; margin-bottom: 32px; }
+        
+        /* --- MAIN APP LAYOUT --- */
+        #app-container { display: none; width: 100%; height: 100%; }
+        #app-container.authenticated { display: flex; }
+
+        /* SIDEBAR (NAV) */
+        .sidebar { width: 280px; background-color: var(--primary); color: white; display: flex; flex-direction: column; transition: 0.3s; z-index: 10; }
+        .sidebar-header { height: 72px; display: flex; align-items: center; gap: 16px; padding: 0 24px; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .sidebar-header .logo-mini { width: 32px; height: 32px; background: var(--accent); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; }
+        .sidebar-header h2 { font-size: 18px; font-weight: 600; letter-spacing: 0.5px; }
+        
+        .nav-menu { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+        .nav-item { background: transparent; border: none; color: #cbd5e0; padding: 14px 20px; border-radius: 10px; font-size: 14px; font-weight: 500; text-align: left; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 12px; }
+        .nav-item:hover { background: rgba(255,255,255,0.05); color: white; }
+        .nav-item.active { background: var(--accent); color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        
+        /* MAIN CONTENT AREA */
+        .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; }
+        
+        /* TOPBAR */
+        .topbar { height: 72px; background: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; z-index: 5; }
+        .breadcrumb { font-size: 15px; font-weight: 500; color: var(--text-muted); display: flex; align-items: center; gap: 8px; }
+        .breadcrumb span.current { color: var(--primary); font-weight: 600; }
+        
+        .user-menu { display: flex; align-items: center; gap: 16px; }
+        .role-badge { background: #eff6ff; color: var(--accent); padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid #bfdbfe; }
+        .avatar { width: 40px; height: 40px; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border: 1px solid #cbd5e0; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--primary); }
+
+        /* VIEWS */
+        .view-container { flex: 1; padding: 32px; overflow-y: auto; }
+        .view { display: none; animation: fadeIn 0.4s ease forwards; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .section-title { font-size: 24px; font-weight: 700; color: var(--primary); margin-bottom: 8px; }
+        .section-desc { font-size: 14px; color: var(--text-muted); margin-bottom: 24px; }
+
+        /* CARDS & DASHBOARD */
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .kpi-card { background: var(--bg-surface); border-radius: 16px; padding: 24px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); display: flex; flex-direction: column; gap: 12px; transition: transform 0.2s; }
+        .kpi-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-md); }
+        .kpi-title { font-size: 13px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .kpi-value { font-size: 36px; font-weight: 800; color: var(--primary); line-height: 1; }
+
+        /* FORMS */
+        .form-panel { background: var(--bg-surface); border-radius: 16px; padding: 32px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); max-width: 800px; }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
+        .form-group.full { grid-column: 1 / -1; }
+        label { font-size: 14px; font-weight: 600; color: var(--primary); }
+        input, select, textarea { width: 100%; padding: 12px 16px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; background: #f8fafc; transition: all 0.2s; color: var(--text-main); }
+        input:focus, select:focus, textarea:focus { border-color: var(--accent); background: var(--bg-surface); outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        /* BUTTONS */
+        .btn { padding: 12px 20px; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; border: none; display: inline-flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s; }
+        .btn-primary { background: var(--accent); color: white; }
+        .btn-primary:hover { background: var(--accent-hover); box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: #f1f5f9; border-color: #cbd5e0; }
+
+        /* TABLES */
+        .table-wrapper { background: var(--bg-surface); border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); overflow: hidden; margin-top: 16px; }
+        .table-toolbar { padding: 16px 24px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; background: #f8fafc; }
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { background: var(--bg-surface); padding: 16px 24px; font-size: 12px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid var(--border); }
+        td { padding: 16px 24px; font-size: 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: #f8fafc; }
+
+        .status-badge { display: inline-flex; padding: 6px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; }
+        .status-pending { background: #fffbeb; color: var(--warning); border: 1px solid #fde68a; }
+        .status-resolved { background: #ecfdf5; color: var(--success); border: 1px solid #a7f3d0; }
+        .priority-high { color: var(--danger); font-weight: 700; }
+
+        /* UPLOAD BTN */
+        .upload-btn-wrapper { position: relative; overflow: hidden; display: inline-block; }
+        .upload-btn-wrapper input[type=file] { font-size: 100px; position: absolute; left: 0; top: 0; opacity: 0; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-wrapper">
+            <div class="logo-box">V</div>
+            <h2>VEXOR Enterprise</h2>
+            <p>IT Service Management Platform</p>
+            <form id="loginForm" style="text-align: left;">
+                <div class="form-group" style="margin-bottom: 20px;">
+                    <label>Usuario / ID Operativo</label>
+                    <input type="text" id="username" required placeholder="Ingresa 'julio', 'bryam' o 'angelo'">
+                </div>
+                <div class="form-group" style="margin-bottom: 32px;">
+                    <label>Clave de Acceso</label>
+                    <input type="password" id="password" required placeholder="••••••••">
+                </div>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 14px; font-size: 16px;">Ingresar al Sistema</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="app-container">
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-mini">V</div>
+                <h2>VEXOR ITSM</h2>
+            </div>
+            <div class="nav-menu">
+                <button class="nav-item active" onclick="switchView('dashboard', 'Dashboard Analítico')">📊 Dashboard</button>
+                <button class="nav-item" onclick="switchView('nuevoTicket', 'Apertura de Incidente')">➕ Nuevo Ticket</button>
+                <button class="nav-item" onclick="switchView('listaTickets', 'Gestión de Incidentes')">📋 Mesa de Ayuda</button>
+                <button class="nav-item admin-only" id="cmdbMenuBtn" onclick="switchView('cmdbView', 'Base de Datos de Configuración')">💻 CMDB Activos</button>
+            </div>
+            <div style="padding: 24px 16px;">
+                <button class="nav-item" onclick="logout()" style="color: #fca5a5; background: rgba(220, 38, 38, 0.1);">🚪 Cerrar Sesión</button>
+            </div>
+        </nav>
+
+        <main class="main-content">
+            <header class="topbar">
+                <div class="breadcrumb">
+                    <span>Espacio de Trabajo</span>
+                    <span style="color: #cbd5e0;">/</span>
+                    <span class="current" id="currentViewTitle">Dashboard Analítico</span>
+                </div>
+                <div class="user-menu">
+                    <span class="role-badge" id="roleIndicator">Rol</span>
+                    <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                        <span style="font-size: 14px; font-weight: 600;" id="userFullName">Usuario</span>
+                        <span style="font-size: 12px; color: var(--text-muted);">VEXOR Team</span>
+                    </div>
+                    <div class="avatar" id="userInitial">--</div>
+                </div>
+            </header>
+
+            <div class="view-container">
+                
+                <div id="dashboard" class="view active">
+                    <h1 class="section-title">Centro de Operaciones (NOC)</h1>
+                    <p class="section-desc">Monitoreo en tiempo real de la carga de trabajo y rendimiento del servicio.</p>
+                    
+                    <div class="kpi-grid">
+                        <div class="kpi-card">
+                            <span class="kpi-title">Incidentes Registrados</span>
+                            <span class="kpi-value" id="kpi-total">0</span>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid var(--warning);">
+                            <span class="kpi-title">Soporte en Proceso</span>
+                            <span class="kpi-value" id="kpi-pendientes">0</span>
+                        </div>
+                        <div class="kpi-card" style="border-left: 4px solid var(--success);">
+                            <span class="kpi-title">Tickets Cerrados</span>
+                            <span class="kpi-value" id="kpi-resueltos">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="nuevoTicket" class="view">
+                    <h1 class="section-title">Crear Nuevo Incidente</h1>
+                    <p class="section-desc">Registro estandarizado para la cola de atención de VEXOR.</p>
+                    
+                    <div class="form-panel">
+                        <form id="ticketForm" class="form-grid">
+                            <div class="form-group">
+                                <label>Usuario Solicitante</label>
+                                <input type="text" id="cliente" required placeholder="Nombre completo">
+                            </div>
+                            <div class="form-group">
+                                <label>CI Afectado (Equipo)</label>
+                                <input type="text" id="equipo" required placeholder="Marca / Modelo">
+                            </div>
+                            <div class="form-group full">
+                                <label>Descripción del Síntoma</label>
+                                <textarea id="problema" rows="4" required placeholder="Describa el error de hardware/software reportado..."></textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>Nivel de Urgencia</label>
+                                <select id="prioridad">
+                                    <option value="Alta">Alta (Parada operativa)</option>
+                                    <option value="Media" selected>Media (Falla aislada)</option>
+                                    <option value="Baja">Baja (Mantenimiento)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Especialista TI (Asignación)</label>
+                                <select id="tecnico">
+                                    <option value="Carlos Quispe">Carlos Quispe (N1 - Software)</option>
+                                    <option value="Rosa Llanos">Rosa Llanos (N2 - Hardware)</option>
+                                    <option value="Kevin Torres">Kevin Torres (Impresoras)</option>
+                                    <option value="Lucía Palomino">Lucía Palomino (Mesa de Ayuda)</option>
+                                </select>
+                            </div>
+                            <div class="form-group full" style="margin-top: 16px;">
+                                <button type="submit" class="btn btn-primary">Registrar en Base de Datos</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div id="listaTickets" class="view">
+                    <h1 class="section-title">Cola de Tickets (Service Desk)</h1>
+                    <p class="section-desc">Gestión integral de las solicitudes de servicio en curso.</p>
+
+                    <div class="table-wrapper">
+                        <div class="table-toolbar">
+                            <input type="text" id="searchBox" oninput="filtrarTickets()" placeholder="🔎 Buscar ticket, usuario o equipo..." style="max-width: 300px;">
+                            
+                            <div class="admin-only" id="adminActions" style="display: flex; gap: 12px;">
+                                <div class="upload-btn-wrapper">
+                                    <button class="btn btn-outline">📥 Importar CSV</button>
+                                    <input type="file" id="csvFileInput" accept=".csv" onchange="importarCSV()">
+                                </div>
+                                <button onclick="exportarExcel()" class="btn btn-outline" style="color: var(--success); border-color: #a7f3d0;">🟢 Excel</button>
+                                <button onclick="generarPDF()" class="btn btn-outline" style="color: var(--danger); border-color: #fecaca;">🔴 PDF</button>
+                            </div>
+                        </div>
+                        
+                        <div id="printArea">
+                            <table id="tablaTickets">
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Usuario</th>
+                                        <th>Equipo (CI)</th>
+                                        <th>Urgencia</th>
+                                        <th>Especialista</th>
+                                        <th>Estado</th>
+                                        <th class="no-print">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="cmdbView" class="view">
+                    <h1 class="section-title">Base de Datos CMDB</h1>
+                    <p class="section-desc">Registro oficial de activos tecnológicos internos de VEXOR.</p>
+                    
+                    <div class="table-wrapper">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Tipo de Activo</th>
+                                    <th>Marca / Modelo</th>
+                                    <th>Stock</th>
+                                    <th>Condición</th>
+                                    <th>Custodio</th>
+                                    <th>Ubicación</th>
+                                </tr>
+                            </thead>
+                            <tbody id="cmdbTableBody"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <script>
+        /* BASE DE DATOS LOCAL Y ROLES */
+        const usuariosDB = {
+            "julio": { nombre: "Julio Humberto Vera Palacios", rol: "Gerente TI", pass: "123", init: "JV" },
+            "bryam": { nombre: "Bryam Alexander Benites", rol: "Especialista TI", pass: "123", init: "BB" },
+            "angelo": { nombre: "Angelo Andrey Chirinos", rol: "Especialista TI", pass: "123", init: "AC" }
+        };
+        const activosCMDB = [
+            { tipo: "PC Administrativa", mod: "Lenovo ThinkCentre i5", cant: 1, estado: "Operativo", resp: "Coordinador TI", ub: "Recepción" },
+            { tipo: "PC Banco Pruebas", mod: "Ensamblada Core i5", cant: 1, estado: "Por Mejorar", resp: "Técnico N2", ub: "Taller" },
+            { tipo: "Laptop Técnica", mod: "Lenovo IdeaPad", cant: 1, estado: "Operativo", resp: "Soporte Campo", ub: "Taller" },
+            { tipo: "Router LAN", mod: "TP-Link Archer C6", cant: 1, estado: "Operativo", resp: "Redes", ub: "Nodo Red" }
+        ];
+
+        let tickets = JSON.parse(localStorage.getItem('vexorTickets')) || [];
+        let usuarioActual = null;
+
+        /* AUTENTICACIÓN */
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const userIn = document.getElementById('username').value.toLowerCase().trim();
+            const passIn = document.getElementById('password').value;
+
+            if (usuariosDB[userIn] && usuariosDB[userIn].pass === passIn) {
+                usuarioActual = usuariosDB[userIn];
+                document.getElementById('login-screen').style.display = 'none';
+                document.getElementById('app-container').classList.add('authenticated');
+                
+                document.getElementById('userFullName').innerText = usuarioActual.nombre;
+                document.getElementById('userInitial').innerText = usuarioActual.init;
+                document.getElementById('roleIndicator').innerText = usuarioActual.rol;
+
+                let isAdmin = usuarioActual.rol === "Gerente TI";
+                document.getElementById('cmdbMenuBtn').style.display = isAdmin ? 'flex' : 'none';
+                document.getElementById('adminActions').style.display = isAdmin ? 'flex' : 'none';
+
+                switchView('dashboard', 'Dashboard Analítico');
+            } else { alert('Credenciales incorrectas.'); }
+        });
+
+        function logout() {
+            document.getElementById('loginForm').reset();
+            document.getElementById('app-container').classList.remove('authenticated');
+            document.getElementById('login-screen').style.display = 'flex';
+        }
+
+        /* NAVEGACIÓN */
+        function switchView(viewId, titleStr) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            document.getElementById(viewId).classList.add('active');
+            if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            if(titleStr) document.getElementById('currentViewTitle').innerText = titleStr;
+
+            if(viewId === 'dashboard') actualizarDashboard();
+            if(viewId === 'listaTickets') renderizarTabla(tickets);
+            if(viewId === 'cmdbView') cargarCMDB();
+        }
+
+        /* LÓGICA CORE */
+        document.getElementById('ticketForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            tickets.push({
+                id: 'INC-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
+                cliente: document.getElementById('cliente').value, equipo: document.getElementById('equipo').value,
+                problema: document.getElementById('problema').value, prioridad: document.getElementById('prioridad').value,
+                tecnico: document.getElementById('tecnico').value, estado: 'Pendiente'
+            });
+            localStorage.setItem('vexorTickets', JSON.stringify(tickets));
+            this.reset();
+            switchView('listaTickets', 'Gestión de Incidentes');
+            setTimeout(() => alert('Ticket Registrado en CMDB'), 100);
+        });
+
+        function renderizarTabla(datos) {
+            const tbody = document.querySelector('#tablaTickets tbody');
+            tbody.innerHTML = '';
+            datos.forEach((t) => {
+                let pClass = t.prioridad === 'Alta' ? 'priority-high' : '';
+                let statClass = t.estado === 'Pendiente' ? 'status-pending' : 'status-resolved';
+                let btn = t.estado === 'Pendiente' 
+                    ? `<button onclick="resolverTicket('${t.id}')" class="btn btn-outline" style="padding: 6px 12px; font-size:12px;">Resolver</button>`
+                    : `<span style="color:var(--success); font-weight:600; font-size:13px;">Completado</span>`;
+                tbody.innerHTML += `<tr>
+                    <td style="font-weight:600; color:var(--primary);">${t.id}</td>
+                    <td>${t.cliente}</td><td>${t.equipo}</td>
+                    <td class="${pClass}">${t.prioridad}</td>
+                    <td>${t.tecnico.split(' ')[0]}</td>
+                    <td><span class="status-badge ${statClass}">${t.estado}</span></td>
+                    <td class="no-print">${btn}</td>
+                </tr>`;
+            });
+        }
+
+        function resolverTicket(id) {
+            let t = tickets.find(x => x.id === id);
+            if(t) { t.estado = 'Resuelto'; localStorage.setItem('vexorTickets', JSON.stringify(tickets)); renderizarTabla(tickets); }
+        }
+
+        function filtrarTickets() {
+            let q = document.getElementById('searchBox').value.toLowerCase();
+            renderizarTabla(tickets.filter(t => t.cliente.toLowerCase().includes(q) || t.equipo.toLowerCase().includes(q)));
+        }
+
+        function cargarCMDB() {
+            document.getElementById('cmdbTableBody').innerHTML = activosCMDB.map(a => 
+                `<tr><td><strong>${a.tipo}</strong></td><td>${a.mod}</td><td>${a.cant}</td>
+                <td><span class="status-badge status-resolved">${a.estado}</span></td>
+                <td>${a.resp}</td><td>${a.ub}</td></tr>`).join('');
+        }
+
+        function actualizarDashboard() {
+            document.getElementById('kpi-total').innerText = tickets.length;
+            document.getElementById('kpi-pendientes').innerText = tickets.filter(t => t.estado === 'Pendiente').length;
+            document.getElementById('kpi-resueltos').innerText = tickets.filter(t => t.estado === 'Resuelto').length;
+        }
+
+        /* EXPORTACIÓN Y PDF */
+        function exportarExcel() {
+            let csv = "\uFEFFID,Usuario,Equipo,Problema,Prioridad,Tecnico,Estado\n" + tickets.map(t => 
+                `"${t.id}","${t.cliente}","${t.equipo}","${t.problema}","${t.prioridad}","${t.tecnico}","${t.estado}"`).join('\n');
+            let a = document.createElement('a');
+            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
+            a.download = 'REPORTE_VEXOR.csv'; a.click();
+        }
+
+        function generarPDF() {
+            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+            html2pdf().set({ margin: 10, filename: 'MESA_AYUDA.pdf', jsPDF: { orientation: 'landscape' } })
+            .from(document.getElementById('printArea')).save().then(() => {
+                document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
+            });
+        }
+
+        function importarCSV() {
+            const file = document.getElementById('csvFileInput').files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = e => {
+                const lineas = e.target.result.split('\n');
+                let validos = [];
+                for (let i = 1; i < lineas.length; i++) {
+                    const c = lineas[i].split(',').map(x => x.replace(/^"|"$/g, '').trim());
+                    if (c.length >= 7) validos.push({ id: c[0], cliente: c[1], equipo: c[2], problema: c[3], prioridad: c[4], tecnico: c[5], estado: c[6] });
+                }
+                if(validos.length > 0) { tickets = validos; localStorage.setItem('vexorTickets', JSON.stringify(tickets)); renderizarTabla(tickets); alert('Base Hidratada'); }
+            };
+            reader.readAsText(file, 'UTF-8');
+        }
+    </script>
+</body>
+</html>
