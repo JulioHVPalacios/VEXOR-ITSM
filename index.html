@@ -1,131 +1,206 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VEXOR - Enterprise ITSM & AI Cortex Cloud</title>
+    <title>VEXOR - Omnichannel ITSM</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
-        
+        /* SISTEMA DE VARIABLES DINÁMICAS (TEMA CLARO) */
         :root {
-            --primary-dark: #0f172a;
-            --primary: #1e3a8a;
-            --secondary: #3b82f6;
-            --background: #f8fafc;
-            --surface: #ffffff;
-            --text-main: #334155;
+            --bg-body: #f4f7f9;
+            --bg-surface: #ffffff;
+            --bg-sidebar: #0b1120;
+            --text-main: #1e293b;
             --text-muted: #64748b;
+            --border: #e2e8f0;
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --secondary: #3b82f6;
+            --purple-ai: #8b5cf6;
             --success: #10b981;
+            --whatsapp: #25D366;
             --warning: #f59e0b;
             --danger: #ef4444;
-            --border: #e2e8f0;
-            --purple-ai: #8b5cf6;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.7);
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; }
-        body { background-color: var(--background); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; }
-        
-        /* INTERFAZ DE AUTENTICACIÓN AVANZADA */
-        #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, var(--primary-dark) 0%, #1e293b 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        .login-card { background: var(--surface); padding: 44px; border-radius: 20px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); border: 1px solid var(--border); }
-        .login-header { text-align: center; margin-bottom: 32px; }
-        .login-header .logo { width: 56px; height: 56px; background: var(--secondary); border-radius: 12px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 800; font-size: 24px; box-shadow: 0 10px 15px -3px rgba(59,130,246,0.3); }
-        .login-header h2 { color: var(--primary-dark); font-size: 24px; font-weight: 700; }
-        .login-header p { color: var(--text-muted); font-size: 14px; margin-top: 4px; }
+        /* SISTEMA DE VARIABLES DINÁMICAS (TEMA OSCURO) */
+        [data-theme="dark"] {
+            --bg-body: #0f172a;
+            --bg-surface: #1e293b;
+            --bg-sidebar: #020617;
+            --text-main: #f1f5f9;
+            --text-muted: #94a3b8;
+            --border: #334155;
+            --primary: #3b82f6;
+            --primary-hover: #60a5fa;
+            --shadow-sm: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+            --shadow-hover: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+            --glass-bg: rgba(30, 41, 59, 0.6);
+        }
 
-        /* CONTENEDOR PRINCIPAL DEL SISTEMA INTERNO */
+        /* RESETEO GLOBAL Y TIPOGRAFÍA 'INTER' */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        body { background-color: var(--bg-body); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; -webkit-font-smoothing: antialiased; }
+        
+        /* SCROLLBAR INVISIBLE/ELEGANTE */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        
+        /* LOGIN PREMIUM CON GLASSMORPHISM Y FONDO ABSTRACTO */
+        #login-screen { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop') center/cover; display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        #login-screen::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(11, 17, 32, 0.9) 0%, rgba(30, 58, 138, 0.8) 100%); backdrop-filter: blur(10px); }
+        .login-card { position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(24px); padding: 48px; border-radius: 24px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
+        .login-header { text-align: center; margin-bottom: 36px; }
+        
+        /* ESTILOS DEL LOGO REAL 'VEXOR' */
+        .company-logo { width: 100%; max-width: 180px; margin: 0 auto 16px; display: block; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.4); }
+        
+        .login-header h2 { color: #ffffff; font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+        .login-header p { color: #cbd5e1; font-size: 14px; margin-top: 6px; font-weight: 400; }
+
         #app-container { display: none; width: 100%; height: 100%; }
         #app-container.authenticated { display: flex; }
 
-        /* MENÚ LATERAL - ESTILO JIRA ENTERPRISE */
-        .sidebar { width: 280px; background-color: var(--primary-dark); color: white; padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; border-right: 1px solid rgba(255,255,255,0.05); }
-        .sidebar .brand { display: flex; align-items: center; gap: 12px; padding: 0 12px 24px 12px; border-bottom: 1px solid #334155; margin-bottom: 16px; }
-        .sidebar .brand h2 { font-size: 18px; font-weight: 700; letter-spacing: 0.5px; color: #f8fafc; }
-        .sidebar button { background: none; border: none; color: #94a3b8; padding: 14px 16px; text-align: left; font-size: 14px; font-weight: 500; cursor: pointer; transition: all 0.2s ease; border-radius: 10px; display: flex; align-items: center; gap: 12px; width: 100%; }
-        .sidebar button:hover { background-color: #1e293b; color: white; }
-        .sidebar button.active { background-color: var(--secondary); color: white; box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3); font-weight: 600; }
+        /* SIDEBAR PROFESIONAL */
+        .sidebar { width: 280px; background-color: var(--bg-sidebar); color: white; display: flex; flex-direction: column; border-right: 1px solid rgba(255,255,255,0.05); z-index: 10; box-shadow: 4px 0 24px rgba(0,0,0,0.1); }
+        .sidebar-header { height: 80px; display: flex; align-items: center; padding: 0 24px; border-bottom: 1px solid rgba(255,255,255,0.05); justify-content: center; }
         
-        .main-content { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-        .top-bar { height: 72px; background-color: var(--surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 32px; }
+        .nav-menu { padding: 24px 16px; display: flex; flex-direction: column; gap: 8px; flex: 1; overflow-y: auto; }
+        .menu-btn { background: transparent; border: none; color: #94a3b8; padding: 14px 18px; font-size: 14px; font-weight: 500; cursor: pointer; border-radius: 12px; display: flex; align-items: center; gap: 14px; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+        .menu-btn svg { width: 20px; height: 20px; fill: currentColor; opacity: 0.7; transition: 0.2s; }
+        .menu-btn:hover { background-color: rgba(255,255,255,0.05); color: white; }
+        .menu-btn:hover svg { opacity: 1; transform: translateX(2px); }
+        .menu-btn.active { background-color: var(--primary); color: white; font-weight: 600; box-shadow: 0 4px 12px rgba(37,99,235,0.4); }
+        .menu-btn.active svg { opacity: 1; }
         
-        .view-container { flex: 1; padding: 32px; overflow-y: auto; }
-        .view { display: none; animation: viewFade 0.3s ease-in-out forwards; }
+        .main-content { flex: 1; display: flex; flex-direction: column; min-width: 0; position: relative; }
+        
+        /* TOPBAR & THEME TOGGLE */
+        .top-bar { height: 80px; background-color: var(--bg-surface); border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; padding: 0 40px; z-index: 5; box-shadow: 0 1px 3px rgba(0,0,0,0.02); }
+        .top-bar-left { display: flex; align-items: center; gap: 16px; }
+        .top-bar-right { display: flex; align-items: center; gap: 24px; }
+        
+        .theme-toggle { background: transparent; border: 1px solid var(--border); color: var(--text-main); width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; cursor: pointer; transition: 0.2s; }
+        .theme-toggle:hover { background: var(--bg-body); transform: rotate(15deg); }
+        .theme-toggle svg { width: 22px; height: 22px; fill: currentColor; }
+
+        .view-container { flex: 1; padding: 40px; overflow-y: auto; }
+        .view { display: none; animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         .view.active { display: block; }
-        @keyframes viewFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
-        h1 { font-size: 26px; font-weight: 700; color: var(--primary-dark); margin-bottom: 6px; }
-        .subtitle { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+        h1 { font-size: 28px; font-weight: 800; color: var(--text-main); margin-bottom: 8px; letter-spacing: -0.5px; }
+        .subtitle { font-size: 15px; color: var(--text-muted); margin-bottom: 32px; font-weight: 400; }
         
-        /* TARJETAS ANALÍTICAS CON NEUMORFISMO LIGERO */
-        .dashboard-cards { display: flex; gap: 24px; margin-bottom: 32px; }
-        .card { background: var(--surface); padding: 24px; border-radius: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); flex: 1; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 6px; transition: transform 0.2s, box-shadow 0.2s; }
-        .card:hover { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); }
-        .card h3 { color: var(--text-muted); font-size: 12px; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
-        .card .number { font-size: 36px; font-weight: 700; color: var(--primary-dark); }
+        /* DASHBOARD CARDS PREMIUM */
+        .dashboard-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; margin-bottom: 32px; }
+        .card { background: var(--bg-surface); padding: 32px; border-radius: 20px; box-shadow: var(--shadow-sm); border: 1px solid var(--border); display: flex; flex-direction: column; transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.3s; position: relative; overflow: hidden; }
+        .card:hover { transform: translateY(-4px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-header h3 { color: var(--text-muted); font-size: 13px; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; }
+        .trend { font-size: 12px; font-weight: 700; padding: 6px 12px; border-radius: 20px; display: flex; align-items: center; gap: 4px; }
+        .trend-up { background: rgba(16,185,129,0.1); color: var(--success); }
+        .card .number { font-size: 46px; font-weight: 800; color: var(--text-main); line-height: 1; letter-spacing: -1px; }
         
-        /* GRÁFICOS ESTADÍSTICOS ADAPTATIVOS POR CSS (100% OFFLINE) */
-        .analytics-section { display: flex; gap: 24px; margin-top: 12px; }
-        .chart-box { background: var(--surface); border: 1px solid var(--border); padding: 24px; border-radius: 16px; flex: 1; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
-        .chart-box h4 { margin-bottom: 20px; font-size: 15px; font-weight: 600; color: var(--primary-dark); }
-        .bar-container { display: flex; flex-direction: column; gap: 14px; }
+        /* CHARTS */
+        .analytics-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(400px, 1fr)); gap: 24px; }
+        .chart-box { background: var(--bg-surface); border: 1px solid var(--border); padding: 32px; border-radius: 20px; box-shadow: var(--shadow-sm); }
+        .chart-box h4 { margin-bottom: 24px; font-size: 16px; font-weight: 700; color: var(--text-main); }
+        .bar-container { display: flex; flex-direction: column; gap: 16px; }
         .bar-row { display: flex; align-items: center; gap: 16px; }
-        .bar-label { width: 130px; font-size: 13px; font-weight: 500; color: var(--text-main); }
-        .bar-track { flex: 1; height: 10px; background-color: #f1f5f9; border-radius: 6px; overflow: hidden; }
-        .bar-fill { height: 100%; background-color: var(--secondary); width: 0%; transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1); }
-        .bar-value { width: 24px; text-align: right; font-size: 13px; font-weight: 600; color: var(--primary-dark); }
+        .bar-label { width: 140px; font-size: 13px; font-weight: 600; color: var(--text-muted); }
+        .bar-track { flex: 1; height: 8px; background-color: var(--bg-body); border-radius: 4px; overflow: hidden; }
+        .bar-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; }
+        .bar-value { width: 30px; text-align: right; font-size: 14px; font-weight: 700; color: var(--text-main); }
 
-        /* RECUADRO CON COMPONENTES DE INTELIGENCIA ARTIFICIAL */
-        .ai-panel { background: linear-gradient(145deg, #ffffff, #fcfaff); border: 1px solid #ddd6fe; padding: 20px; border-radius: 12px; box-shadow: 0 4px 12px rgba(139, 92, 246, 0.05); margin-top: 16px; }
-        .ai-badge-container { display: flex; flex-direction: column; gap: 8px; color: #4c1d95; font-size: 14px; font-weight: 500; }
-        .ai-pills { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
-        .ai-pill { font-size: 11px; padding: 4px 10px; background: #ede9fe; color: #6d28d9; border-radius: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid #ddd6fe; }
+        /* VEXOR AI CORTEX PANEL (UI FUTURISTA) */
+        .ai-panel { background: var(--bg-surface); border: 1px solid var(--purple-ai); padding: 24px; border-radius: 16px; margin-top: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08); }
+        .ai-panel::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 60%); z-index: 0; pointer-events: none; }
+        .ai-content { position: relative; z-index: 1; }
+        .ai-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .ai-title { color: var(--purple-ai); font-weight: 800; display: flex; align-items: center; gap: 8px; font-size: 15px; text-transform: uppercase; letter-spacing: 0.5px; }
+        .ai-suggestion-text { font-size: 15px; color: var(--text-main); line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+        .ai-pills { display: flex; gap: 8px; flex-wrap: wrap; }
+        .ai-pill { font-size: 11px; padding: 6px 12px; background: rgba(139,92,246,0.1); color: var(--purple-ai); border-radius: 20px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; border: 1px solid rgba(139,92,246,0.2); }
 
-        /* MÓDULO DE CONTROL DE FILTROS Y BÚSQUEDA */
-        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; background: white; padding: 16px 24px; border-radius: 12px; border: 1px solid var(--border); box-shadow: 0 1px 2px rgba(0,0,0,0.02); }
-        .search-filters { display: flex; gap: 12px; flex: 1; }
-        .search-filters input { padding: 10px 16px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; flex: 1; background-color: #f8fafc; }
-        .search-filters input:focus { outline: none; border-color: var(--secondary); background-color: white; }
-        .action-buttons { display: flex; gap: 10px; align-items: center; }
+        /* FORMULARIOS Y CONTROLES */
+        .toolbar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; gap: 16px; background: var(--bg-surface); padding: 16px 24px; border-radius: 16px; border: 1px solid var(--border); box-shadow: var(--shadow-sm); flex-wrap: wrap; }
+        .search-filters { display: flex; flex: 1; min-width: 250px; }
+        .search-filters input { padding: 12px 20px; border: 1px solid var(--border); border-radius: 12px; font-size: 14px; flex: 1; max-width: 400px; background: var(--bg-body); color: var(--text-main); font-weight: 500; }
+        .search-filters input:focus { outline: none; border-color: var(--primary); background: var(--bg-surface); box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
         
-        /* BOTONES INTERACTIVOS DE ALTA FIDELIDAD */
-        .btn { padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; gap: 8px; transition: all 0.2s; }
-        .btn-primary { background-color: var(--secondary); color: white; }
-        .btn-primary:hover { background-color: #1d4ed8; box-shadow: 0 4px 12px rgba(59,130,246,0.25); }
+        .action-buttons { display: flex; gap: 12px; flex-wrap: wrap; }
+        .btn { padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; border: none; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); letter-spacing: 0.3px; }
+        .btn-primary { background-color: var(--primary); color: white; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37,99,235,0.3); }
         .btn-success { background-color: #10b981; color: white; }
-        .btn-success:hover { background-color: #059669; box-shadow: 0 4px 12px rgba(16,185,129,0.25); }
         .btn-danger { background-color: #ef4444; color: white; }
-        .btn-danger:hover { background-color: #dc2626; box-shadow: 0 4px 12px rgba(239,68,68,0.25); }
-        .btn-outline { background-color: transparent; border: 1px solid #cbd5e0; color: var(--text-main); }
-        .btn-outline:hover { background-color: #f1f5f9; border-color: #94a3b8; }
+        .btn-whatsapp { background-color: var(--whatsapp); color: white; }
+        .btn-whatsapp:hover { background-color: #128C7E; transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37,211,102,0.3); }
+        .btn-dark { background-color: var(--text-main); color: var(--bg-surface); }
+        .btn-outline { background-color: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background-color: var(--bg-body); border-color: var(--text-muted); }
         
-        /* FORMULARIO PREMIUM */
-        .form-panel { background: white; padding: 32px; border-radius: 16px; border: 1px solid var(--border); max-width: 720px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); }
-        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        .form-panel h3 { grid-column: 1 / -1; font-size: 16px; color: var(--primary-dark); font-weight: 600; border-left: 4px solid var(--purple-ai); padding-left: 8px; margin-bottom: -4px; margin-top: 10px; display: flex; align-items: center; gap: 8px; }
-        .form-group { margin-bottom: 4px; display: flex; flex-direction: column; gap: 6px; }
+        .form-panel { background: var(--bg-surface); padding: 40px; border-radius: 24px; border: 1px solid var(--border); max-width: 800px; box-shadow: var(--shadow-sm); }
+        .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        .form-group { display: flex; flex-direction: column; gap: 8px; }
         .form-group.full { grid-column: 1 / -1; }
-        .form-group label { font-size: 13px; font-weight: 600; color: var(--primary-dark); }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 11px 14px; border: 1px solid #cbd5e0; border-radius: 8px; font-size: 14px; background-color: #f8fafc; transition: all 0.2s; }
-        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--secondary); outline: none; background-color: white; box-shadow: 0 0 0 3px rgba(59,130,246,0.1); }
+        .form-group label { font-size: 13px; font-weight: 700; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 14px 16px; border: 1px solid var(--border); border-radius: 12px; font-size: 15px; background: var(--bg-body); color: var(--text-main); font-weight: 500; transition: 0.2s; }
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--primary); background: var(--bg-surface); outline: none; box-shadow: 0 0 0 4px rgba(37,99,235,0.1); }
 
-        /* TABLAS CON DISEÑO DE MATRIZ */
-        .table-container { background: white; border: 1px solid var(--border); border-radius: 16px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 24px; }
-        table { width: 100%; border-collapse: collapse; text-align: left; font-size: 14px; }
-        th, td { padding: 16px 24px; border-bottom: 1px solid var(--border); }
-        th { background-color: #f8fafc; color: var(--primary-dark); font-weight: 600; font-size: 13px; }
+        /* TABLAS SAAS */
+        .table-container { background: var(--bg-surface); border: 1px solid var(--border); border-radius: 20px; overflow-x: auto; box-shadow: var(--shadow-sm); }
+        table { width: 100%; border-collapse: collapse; text-align: left; white-space: nowrap; }
+        th, td { padding: 18px 24px; border-bottom: 1px solid var(--border); }
+        th { background-color: rgba(0,0,0,0.02); color: var(--text-muted); font-weight: 700; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; }
+        [data-theme="dark"] th { background-color: rgba(255,255,255,0.02); }
         tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: #fafafa; }
+        tr:hover { background-color: var(--bg-body); }
+        td { font-size: 14px; font-weight: 500; color: var(--text-main); }
         
-        .badge { padding: 6px 12px; border-radius: 12px; font-size: 12px; font-weight: 600; display: inline-block; }
-        .badge-alta { background-color: #fee2e2; color: var(--danger); }
-        .badge-media { background-color: #ffedd5; color: var(--warning); }
-        .badge-baja { background-color: #d1fae5; color: var(--success); }
-        .badge-pending { background-color: #fef3c7; color: #d97706; border: 1px solid #fde68a; }
-        .badge-resolved { background-color: #d1fae5; color: #059669; border: 1px solid #a7f3d0; }
+        .badge { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px; }
+        .badge::before { content:''; display:block; width:6px; height:6px; border-radius:50%; }
+        .badge-alta { background: rgba(239,68,68,0.1); color: var(--danger); }
+        .badge-alta::before { background: var(--danger); }
+        .badge-media { background: rgba(245,158,11,0.1); color: var(--warning); }
+        .badge-media::before { background: var(--warning); }
+        .badge-baja { background: rgba(16,185,129,0.1); color: var(--success); }
+        .badge-baja::before { background: var(--success); }
 
-        .role-indicator { background: #eff6ff; color: var(--secondary); padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 600; border: 1px solid #bfdbfe; }
-        .user-avatar { width: 36px; height: 36px; background: var(--primary); color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 14px; }
+        .role-indicator { background: rgba(37,99,235,0.1); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid rgba(37,99,235,0.2); }
+        .user-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
+
+        /* KNOWLEDGE BASE - DISEÑO GLASSMORPHISM & VECTORES */
+        .kb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
+        .kb-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); padding: 32px; border-radius: 24px; box-shadow: var(--shadow-sm); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
+        .kb-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
+        .kb-icon-wrapper { width: 48px; height: 48px; background: rgba(37,99,235,0.1); color: var(--primary); border-radius: 14px; display: flex; align-items: center; justify-content: center; margin-bottom: 20px; }
+        .kb-icon-wrapper svg { width: 24px; height: 24px; fill: currentColor; }
+        .kb-card h3 { font-size: 18px; color: var(--text-main); margin-bottom: 12px; font-weight: 700; }
+        .kb-card p { font-size: 14px; color: var(--text-muted); line-height: 1.6; margin-bottom: 16px; font-weight: 500; }
+
+        .resolution-note { font-size: 12px; color: var(--success); display: block; margin-top: 4px; font-style: italic; white-space: normal; max-width: 250px; font-weight: 500; }
+
+        /* MODALES FLOTANTES */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); display: none; align-items: center; justify-content: center; z-index: 1000; opacity: 0; transition: 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-box { background: var(--bg-surface); padding: 32px; border-radius: 24px; width: 100%; max-width: 500px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid var(--border); transform: translateY(20px); transition: 0.3s; }
+        .modal-overlay.active .modal-box { transform: translateY(0); }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+        .modal-header h3 { font-size: 18px; color: var(--text-main); font-weight: 800; }
+        .close-btn { background: transparent; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; line-height: 1; transition: 0.2s; }
+        .close-btn:hover { color: var(--danger); }
 
         @media print {
             .sidebar, .top-bar, .toolbar, .no-print { display: none !important; }
@@ -138,191 +213,255 @@
 </head>
 <body>
 
+    <div class="modal-overlay" id="modalTech">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="modalTechTitle">Agregar Técnico</h3>
+                <button class="close-btn" onclick="cerrarModal('modalTech')">&times;</button>
+            </div>
+            <form id="editTechForm" class="form-grid">
+                <input type="hidden" id="editTechIndex">
+                <div class="form-group full"><label>Nombre Completo</label><input type="text" id="editNomTecnico" required></div>
+                <div class="form-group"><label>Perfil</label><input type="text" id="editPerfilTecnico" required></div>
+                <div class="form-group"><label>WhatsApp</label><input type="text" id="editNumTecnico" required></div>
+                <div class="form-group full" style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="button" class="btn btn-outline" style="flex:1;" onclick="cerrarModal('modalTech')">Cancelar</button>
+                    <button type="submit" class="btn btn-primary" style="flex:1;">Guardar Cambios</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="modalCMDB">
+        <div class="modal-box">
+            <div class="modal-header">
+                <h3 id="cmdbModalTitle">Agregar Activo CMDB</h3>
+                <button class="close-btn" onclick="cerrarModal('modalCMDB')">&times;</button>
+            </div>
+            <form id="cmdbForm" class="form-grid">
+                <input type="hidden" id="cmdbIndex" value="-1">
+                <div class="form-group"><label>Tipo (Categoría)</label><input type="text" id="cmdbTipo" required placeholder="Ej: Laptop"></div>
+                <div class="form-group"><label>Marca</label><input type="text" id="cmdbMarca" required placeholder="Ej: ASUS"></div>
+                <div class="form-group full"><label>Modelo / Especificación</label><input type="text" id="cmdbMod" required placeholder="Ej: TUF F15"></div>
+                <div class="form-group"><label>Responsable</label><input type="text" id="cmdbResp" required placeholder="Ej: Soporte N2"></div>
+                <div class="form-group"><label>Ubicación</label><input type="text" id="cmdbUb" required placeholder="Ej: Taller"></div>
+                <div class="form-group full" style="display:flex; gap:10px; margin-top:10px;">
+                    <button type="button" class="btn btn-outline" style="flex:1;" onclick="cerrarModal('modalCMDB')">Cancelar</button>
+                    <button type="submit" class="btn btn-success" style="flex:1;">Guardar Activo</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <div id="login-screen">
         <div class="login-card">
             <div class="login-header">
-                <div class="logo">V</div>
+                <img src="logo.png" alt="VEXOR Logo" class="company-logo" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                
+                <div class="logo" style="display:none;"><svg viewBox="0 0 24 24" width="32" height="32" fill="white"><path d="M12 2L2 22h20L12 2zm0 6l5.5 11h-11L12 8z"/></svg></div>
+                
                 <h2>Mesa de Servicios VEXOR</h2>
-                <p>Plataforma ITSM e Infraestructura TI</p>
+                <p>Centro de Operaciones TI - Sede Chepén</p>
             </div>
             <form id="loginForm">
-                <div class="form-group" style="margin-bottom: 18px;">
-                    <label>Usuario Técnico Homologado</label>
-                    <input type="text" id="username" required placeholder="Ingresa 'julio', 'bryam' o 'angelo'">
+                <div class="form-group" style="margin-bottom: 24px;">
+                    <label style="color:var(--text-muted); font-size:12px;">ID Operativo</label>
+                    <input type="text" id="username" required placeholder="julio / bryam / angelo / ricardo" style="background:rgba(255,255,255,0.1); color:white; border-color:rgba(255,255,255,0.2);">
                 </div>
-                <div class="form-group" style="margin-bottom: 28px;">
-                    <label>Contraseña Corporativa</label>
-                    <input type="password" id="password" required placeholder="••••••••">
+                <div class="form-group" style="margin-bottom: 36px;">
+                    <label style="color:var(--text-muted); font-size:12px;">Credencial Dinámica</label>
+                    <input type="password" id="password" required placeholder="••••••••" style="background:rgba(255,255,255,0.1); color:white; border-color:rgba(255,255,255,0.2);">
                 </div>
-                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; font-size: 14px;">Autenticar Credenciales</button>
+                <button type="submit" class="btn btn-primary" style="width: 100%; padding: 16px; font-size: 15px; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(37,99,235,0.4);">Iniciar Sesión Segura</button>
             </form>
         </div>
     </div>
 
     <div id="app-container">
         <nav class="sidebar">
-            <div class="brand">
-                <div style="width: 8px; height: 22px; background: var(--purple-ai); border-radius: 2px;"></div>
-                <h2 style="margin-left: 4px;">VEXOR AI-ITSM</h2>
+            <div class="sidebar-header">
+                <img src="logo.png" alt="VEXOR" style="max-height: 44px; width: auto; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.5);" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                
+                <div class="brand-icon" style="display:none;"><svg viewBox="0 0 24 24" width="20" height="20" fill="white"><path d="M12 2L2 22h20L12 2zm0 6l5.5 11h-11L12 8z"/></svg></div>
             </div>
-            <div style="display: flex; flex-direction: column; gap: 4px; flex: 1;">
-                <button class="menu-btn active" onclick="switchView('dashboard')">📊 Dashboard Táctico</button>
-                <button class="menu-btn" onclick="switchView('nuevoTicket')">➕ Apertura Incidente</button>
-                <button class="menu-btn" onclick="switchView('listaTickets')">📋 Mesa de Control</button>
-                <button class="menu-btn admin-only" id="cmdbMenuBtn" onclick="switchView('cmdbView')">💻 Configuración CMDB</button>
+            <div class="nav-menu">
+                <button class="menu-btn active" onclick="switchView('dashboard')">
+                    <svg viewBox="0 0 24 24"><path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z"/></svg> Dashboard Táctico
+                </button>
+                <button class="menu-btn" onclick="switchView('nuevoTicket')">
+                    <svg viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg> Apertura Incidente
+                </button>
+                <button class="menu-btn" onclick="switchView('listaTickets')">
+                    <svg viewBox="0 0 24 24"><path d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.55 1-1 1-1-.45-1-1 .45-1 1-1zm7 16H5V5h2v2h10V5h2v14z"/></svg> Mesa de Control
+                </button>
+                <button class="menu-btn" onclick="switchView('kbView')">
+                    <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 16h-2v-2h2v2zm1.07-7.75l-.9.92C12.45 11.9 12 12.5 12 14h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.75z"/></svg> Base Conocimiento
+                </button>
+                <hr style="border-color: rgba(255,255,255,0.05); margin: 12px 0;">
+                <button class="menu-btn admin-only" id="cmdbMenuBtn" onclick="switchView('cmdbView')">
+                    <svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 1.99-.9 1.99-2L22 6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg> Inventario CMDB
+                </button>
+                <button class="menu-btn admin-only" id="configMenuBtn" onclick="switchView('configView')">
+                    <svg viewBox="0 0 24 24"><path d="M19.14,12.94c0.04-0.3,0.06-0.61,0.06-0.94c0-0.32-0.02-0.64-0.06-0.94l2.03-1.58c0.18-0.14,0.23-0.41,0.12-0.61 l-1.92-3.32c-0.12-0.22-0.37-0.29-0.59-0.22l-2.39,0.96c-0.5-0.38-1.03-0.7-1.62-0.94L14.4,2.81c-0.04-0.24-0.24-0.41-0.48-0.41 h-3.84c-0.24,0-0.43,0.17-0.47,0.41L9.25,5.35C8.66,5.59,8.12,5.92,7.63,6.29L5.24,5.33c-0.22-0.08-0.47,0-0.59,0.22L2.73,8.87 C2.62,9.08,2.66,9.34,2.86,9.48l2.03,1.58C4.84,11.36,4.8,11.69,4.8,12s0.02,0.64,0.06,0.94l-2.03,1.58 c-0.18,0.14-0.23,0.41-0.12,0.61l1.92,3.32c0.12,0.22,0.37,0.29,0.59,0.22l2.39-0.96c0.5,0.38,1.03,0.7,1.62,0.94l0.36,2.54 c0.05,0.24,0.24,0.41,0.48,0.41h3.84c0.24,0,0.43-0.17,0.47-0.41l0.36-2.54c0.59-0.24,1.13-0.56,1.62-0.94l2.39,0.96 c0.22,0.08,0.47,0,0.59-0.22l1.92-3.32c0.12-0.22,0.07-0.49-0.12-0.61L19.14,12.94z M12,15.6c-1.98,0-3.6-1.62-3.6-3.6 s1.62-3.6,3.6-3.6s3.6,1.62,3.6,3.6S13.98,15.6,12,15.6z"/></svg> Ajustes Backoffice
+                </button>
             </div>
-            <button class="menu-btn" onclick="logout()" style="color: #fca5a5; background: rgba(239,68,68,0.08); font-weight: 600;">🚪 Finalizar Sesión</button>
+            <div style="padding: 24px; border-top: 1px solid rgba(255,255,255,0.05);">
+                <button class="menu-btn" onclick="logout()" style="color: #f87171; background: rgba(239,68,68,0.1);">
+                    <svg viewBox="0 0 24 24"><path d="M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z"/></svg> Cerrar Sesión
+                </button>
+            </div>
         </nav>
 
         <div class="main-content">
             <header class="top-bar">
-                <span class="role-indicator" id="roleIndicator">Rol: Consultor Técnico</span>
-                <div style="display: flex; align-items: center; gap: 14px;">
-                    <div style="display: flex; flex-direction: column; align-items: flex-end;">
-                        <span style="font-size: 14px; font-weight: 600; color: var(--primary-dark);" id="userFullName">Nombre Completo</span>
-                        <span style="font-size: 11px; color: var(--text-muted); font-weight: 500;">Sede Chepén, Perú</span>
+                <div class="top-bar-left">
+                    <span class="role-indicator" id="roleIndicator">Rol: Consultor Técnico</span>
+                </div>
+                <div class="top-bar-right">
+                    <button class="theme-toggle" onclick="toggleTheme()" title="Cambiar Tema">
+                        <svg id="theme-icon" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9 9-4.03 9-9c0-.46-.04-.92-.1-1.36-.98 1.37-2.58 2.26-4.4 2.26-2.98 0-5.4-2.42-5.4-5.4 0-1.81.89-3.42 2.26-4.4-.44-.06-.9-.1-1.36-.1z"/></svg>
+                    </button>
+                    <div style="display: flex; align-items: center; gap: 14px; border-left: 1px solid var(--border); padding-left: 20px;">
+                        <div style="display: flex; flex-direction: column; align-items: flex-end;">
+                            <span style="font-size: 14px; font-weight: 700; color: var(--text-main);" id="userFullName">Usuario</span>
+                            <span style="font-size: 12px; color: var(--text-muted); font-weight: 600;">VEXOR Team</span>
+                        </div>
+                        <div class="user-avatar" id="userInitial">--</div>
                     </div>
-                    <div class="user-avatar" id="userInitial">--</div>
                 </div>
             </header>
 
             <div class="view-container">
                 
                 <div id="dashboard" class="view active">
-                    <h1>Centro de Monitoreo de Operaciones</h1>
-                    <p class="subtitle">Métricas clave e Indicadores de Rendimiento de ANS (Acuerdos de Nivel de Servicio).</p>
-                    
+                    <h1>Centro de Operaciones Global (NOC)</h1>
+                    <p class="subtitle">Métricas en tiempo real, SLAs y rendimiento analítico del equipo de soporte.</p>
                     <div class="dashboard-cards">
-                        <div class="card"><h3>Volumen Total Tickets</h3><div class="number" id="kpi-total">0</div></div>
-                        <div class="card" style="border-left: 4px solid var(--warning);"><h3>Incidentes Activos</h3><div class="number" id="kpi-pendientes">0</div></div>
-                        <div class="card" style="border-left: 4px solid var(--success);"><h3>Acuerdos Resueltos</h3><div class="number" id="kpi-resueltos">0</div></div>
+                        <div class="card">
+                            <div class="card-header"><h3>Volumen Histórico</h3><span class="trend trend-up">Activo</span></div>
+                            <div class="number" id="kpi-total">0</div>
+                        </div>
+                        <div class="card" style="border-bottom: 4px solid var(--warning);">
+                            <div class="card-header"><h3>Cola de Espera (WIP)</h3><span class="trend" style="color:var(--warning); background:rgba(245,158,11,0.1);">En Proceso</span></div>
+                            <div class="number" id="kpi-pendientes">0</div>
+                        </div>
+                        <div class="card" style="border-bottom: 4px solid var(--success);">
+                            <div class="card-header"><h3>Acuerdos SLA Cumplidos</h3><span class="trend trend-up">Óptimo</span></div>
+                            <div class="number" id="kpi-resueltos">0</div>
+                        </div>
                     </div>
-                    
                     <div class="analytics-section">
-                        <div class="chart-box">
-                            <h4>Distribución de Incidentes por Urgencia</h4>
-                            <div class="bar-container" id="priority-chart"></div>
-                        </div>
-                        <div class="chart-box">
-                            <h4>Carga Dinámica por Operador Técnico</h4>
-                            <div class="bar-container" id="tech-chart"></div>
-                        </div>
+                        <div class="chart-box"><h4>Distribución de Gravedad</h4><div class="bar-container" id="priority-chart"></div></div>
+                        <div class="chart-box"><h4>Rendimiento por Especialista</h4><div class="bar-container" id="tech-chart"></div></div>
                     </div>
                 </div>
 
                 <div id="nuevoTicket" class="view">
-                    <h1>Apertura de Incidente Crítico</h1>
-                    <p class="subtitle">Apertura y tipificación homologada de solicitudes de soporte técnico.</p>
-                    
+                    <h1>Apertura de Incidente Asistida</h1>
+                    <p class="subtitle">Creación de tickets homologados utilizando inteligencia predictiva de lenguaje natural.</p>
                     <div class="form-panel">
                         <form id="ticketForm" class="form-grid">
-                            <div class="form-group">
-                                <label>Usuario Afectado</label>
-                                <input type="text" id="cliente" required placeholder="Nombre y Apellido del solicitante">
-                            </div>
-                            <div class="form-group">
-                                <label>Elemento de Configuración Relacionado (CMDB)</label>
-                                <select id="equipo" onchange="ejecutarPrediccionIA()"></select>
-                            </div>
-                            <div class="form-group full">
-                                <label>Descripción del Síntoma Operativo</label>
-                                <textarea id="problema" rows="3" required placeholder="Describa el fallo (Ej: correo electrónico, contraseña, no enciende...)" oninput="ejecutarPrediccionIA()"></textarea>
-                            </div>
+                            <div class="form-group"><label>Solicitante del Servicio</label><input type="text" id="cliente" required placeholder="Nombre del cliente o usuario"></div>
+                            <div class="form-group"><label>Vinculación CMDB</label><select id="equipo" onchange="ejecutarPrediccionIA()"></select></div>
+                            <div class="form-group full"><label>Bitácora de Falla o Síntoma</label><textarea id="problema" rows="3" required placeholder="Ej: La laptop Asus TUF no da video..." oninput="ejecutarPrediccionIA()"></textarea></div>
 
-                            <h3>🧠 VEXOR AI Cortex™ Cognitive Engine</h3>
-                            <div class="form-panel full ai-panel">
-                                <div class="ai-badge-container">
-                                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                                        <span style="color: var(--purple-ai); font-weight:700; display:flex; align-items:center; gap:6px;">
-                                            ⚡ Análisis de Red Neuronal Semántica (Offline)
-                                        </span>
-                                        <span id="ai-confidence" style="font-size:11px; background:#f3e8ff; color:#7c3aed; padding:2px 8px; border-radius:10px; font-weight:700;">CONFIDENCIA: 0%</span>
+                            <div class="form-group full">
+                                <div class="ai-panel">
+                                    <div class="ai-content">
+                                        <div class="ai-header">
+                                            <span class="ai-title">⚡ VEXOR AI Cortex™ 2.0 (Offline Mode)</span>
+                                            <span id="ai-confidence" style="font-size:11px; background:rgba(139,92,246,0.1); color:var(--purple-ai); padding:4px 10px; border-radius:12px; font-weight:800;">PRECISIÓN: 0%</span>
+                                        </div>
+                                        <p class="ai-suggestion-text" id="ai-suggestion">Esperando entrada de datos estructurados...</p>
+                                        <div class="ai-pills" id="ai-tags"></div>
                                     </div>
-                                    <p style="margin-top: 8px; font-size:14px; color: var(--primary-dark); line-height: 1.5;">
-                                        👉 <strong>Diagnóstico e Impacto:</strong> <span id="ai-suggestion" style="font-style: italic; color: var(--text-muted);">Esperando cadena de entrada lógica...</span>
-                                    </p>
-                                    <div class="ai-pills" id="ai-tags"></div>
                                 </div>
                             </div>
 
-                            <div class="form-group" style="margin-top:10px;">
-                                <label>Prioridad Calculada por IA</label>
-                                <select id="prioridad">
-                                    <option value="Alta">Alta (Corte completo del servicio)</option>
-                                    <option value="Media" selected>Media (Degradación operativa estándar)</option>
-                                    <option value="Baja">Baja (Requerimiento menor / Preventivo)</option>
-                                </select>
-                            </div>
-                            <div class="form-group" style="margin-top:10px;">
-                                <label>Especialista Sugerido por IA</label>
-                                <select id="tecnico">
-                                    <option value="Carlos Quispe">Carlos Quispe (Mesa de Ayuda N1)</option>
-                                    <option value="Rosa Llanos">Rosa Llanos (Taller Avanzado N2)</option>
-                                    <option value="Kevin Torres">Kevin Torres (Especialista Periféricos)</option>
-                                    <option value="Lucía Palomino">Lucía Palomino (Atención Mostrador)</option>
-                                </select>
-                            </div>
-                            <div class="form-group full" style="margin-top: 16px;">
-                                <button type="submit" class="btn btn-primary" style="padding: 12px; font-size: 14px; background: linear-gradient(135deg, var(--purple-ai) 0%, #7c3aed 100%); width:100%; justify-content:center; box-shadow:0 4px 12px rgba(124,58,237,0.2);">Almacenar Incidente & Confirmar Diagnóstico IA</button>
+                            <div class="form-group" style="margin-top:10px;"><label>Nivel de Severidad (SLA)</label><select id="prioridad"><option value="Alta">Crítica (ANS: 4 Horas)</option><option value="Media" selected>Estándar (ANS: 24 Horas)</option><option value="Baja">Menor (ANS: 72 Horas)</option></select></div>
+                            <div class="form-group" style="margin-top:10px;"><label>Delegación de Especialidad</label><select id="tecnico"></select></div>
+
+                            <div class="form-group full" style="margin-top: 20px;">
+                                <button type="submit" class="btn" style="padding: 16px; font-size: 15px; background: var(--primary); color: white; border-radius: 12px; box-shadow: 0 10px 15px -3px rgba(37,99,235,0.3);">Guardar Registro e Iniciar SLA</button>
                             </div>
                         </form>
                     </div>
                 </div>
 
                 <div id="listaTickets" class="view">
-                    <h1>Mesa de Control de Servicios</h1>
-                    <p class="subtitle">Monitoreo, filtrado y auditoría de la cola de incidentes de VEXOR.</p>
-                    
+                    <h1>Mesa de Ayuda Omnicanal</h1>
+                    <p class="subtitle">Auditoría, notificaciones por WhatsApp y trazabilidad de requerimientos técnicos.</p>
                     <div class="toolbar">
-                        <div class="search-filters">
-                            <input type="text" id="searchBox" oninput="filtrarTickets()" placeholder="🔎 Buscar por usuario, ID o activo de información...">
-                        </div>
+                        <div class="search-filters"><input type="text" id="searchBox" oninput="filtrarTickets()" placeholder="🔎 Buscar por ID de ticket, cliente o hardware..."></div>
                         <div class="action-buttons admin-only" id="adminActions">
-                            <label class="btn btn-outline" style="margin:0; cursor:pointer;">
-                                📥 Sincronizar CSV (Excel)
-                                <input type="file" id="csvFileInput" accept=".csv" onchange="importarCSV()" style="display:none;">
-                            </label>
-                            <button onclick="exportarExcel()" class="btn btn-success">🟢 Volcar a Excel</button>
-                            <button onclick="generarPDF()" class="btn btn-danger">🔴 Descargar PDF</button>
+                            <label class="btn btn-outline" style="cursor:pointer;" title="Restaurar Backup">📥 Importar <input type="file" id="jsonFileInput" accept=".json" onchange="importarJSON()" style="display:none;"></label>
+                            <button onclick="exportarJSON()" class="btn btn-dark">💾 Backup</button>
+                            <button onclick="exportarExcel()" class="btn btn-outline" style="color:var(--success); border-color:var(--success);">CSV</button>
+                            <button onclick="generarPDF()" class="btn btn-outline" style="color:var(--danger); border-color:var(--danger);">PDF</button>
                         </div>
                     </div>
-
                     <div class="table-container" id="printArea">
                         <table id="tablaTickets">
-                            <thead>
-                                <tr>
-                                    <th>ID Ticket</th>
-                                    <th>Usuario</th>
-                                    <th>Activo Afectado</th>
-                                    <th>Prioridad</th>
-                                    <th>Asignado</th>
-                                    <th>Estado</th>
-                                    <th class="no-print">Gestión Operativa</th>
-                                </tr>
-                            </thead>
+                            <thead><tr><th>ID</th><th>Cliente Final</th><th>CMDB Element</th><th>SLA / Nivel</th><th>Responsable</th><th>Status</th><th class="no-print">Acción</th></tr></thead>
                             <tbody></tbody>
                         </table>
                     </div>
                 </div>
 
                 <div id="cmdbView" class="view">
-                    <h1>Base de Datos de Configuración (CMDB)</h1>
-                    <p class="subtitle">Inventario de activos e infraestructura de tecnología interna corporativa.</p>
-                    
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                        <div>
+                            <h1>Inventario Central (CMDB)</h1>
+                            <p class="subtitle" style="margin-bottom:0;">Gestión dinámica de Elementos de Configuración (CIs).</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="abrirModalCMDB()">➕ Agregar Activo</button>
+                    </div>
                     <div class="table-container">
-                        <table>
-                            <thead>
-                                <tr>
-                                    <th>Tipo de CI</th>
-                                    <th>Marca</th>
-                                    <th>Modelo</th>
-                                    <th>Cant.</th>
-                                    <th>Estado</th>
-                                    <th>Responsable</th>
-                                    <th>Ubicación Física</th>
-                                </tr>
-                            </thead>
-                            <tbody id="cmdbTableBody"></tbody>
+                        <table id="tablaCMDBMain">
+                            <thead><tr><th>Categoría</th><th>Fabricante</th><th>Especificación</th><th>Und.</th><th>Estado Vital</th><th>Ubicación</th><th class="no-print">Acción</th></tr></thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <div id="kbView" class="view">
+                    <h1>Base de Conocimiento Empresarial (KEDB)</h1>
+                    <p class="subtitle">Manuales estandarizados y errores conocidos para resolución exprés.</p>
+                    <div class="kb-grid">
+                        <div class="kb-card">
+                            <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M16 7V3h-2v4h-4V3H8v4H6v7.5L9.5 18v3h5v-3l3.5-3.51V7h-2z"/></svg></div>
+                            <h3>Reinicio Frío: UPS Forza</h3>
+                            <p><strong>Causa Común:</strong> Sobrecarga estática o pico de tensión externa.</p>
+                            <p><strong>Triage N2:</strong> Desconectar periféricos. Mantener el botón de encendido presionado 15 segs sin conexión a red eléctrica.</p>
+                        </div>
+                        <div class="kb-card">
+                            <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M12 3C7.95 3 4.21 4.34 1.2 6.6L3 9c2.5-1.9 5.8-3 9-3s6.5 1.1 9 3l1.8-2.4C19.79 4.34 16.05 3 12 3zm0 5C9.3 5 6.8 5.9 4.8 7.4L6.6 9.8c1.5-1.1 3.4-1.8 5.4-1.8s3.9.7 5.4 1.8l1.8-2.4C17.2 5.9 14.7 5 12 5zm0 5c-1.4 0-2.7.5-3.6 1.3L12 16l3.6-4.7c-.9-.8-2.2-1.3-3.6-1.3z"/></svg></div>
+                            <h3>Segmentación Wi-Fi: TP-Link</h3>
+                            <p><strong>Causa Común:</strong> Saturación del canal de 2.4GHz en área de recepción.</p>
+                            <p><strong>Triage N2:</strong> Acceder a la interfaz local. Separar SSIDs (2.4G y 5G). Activar el Aislamiento AP.</p>
+                        </div>
+                        <div class="kb-card">
+                            <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg></div>
+                            <h3>Thermal Throttling: ASUS TUF</h3>
+                            <p><strong>Causa Común:</strong> Desgaste de compuesto térmico en cargas altas.</p>
+                            <p><strong>Triage N2:</strong> Retirar chasis inferior. Aplicar aire comprimido en ductos y renovar pasta térmica en CPU/GPU.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="configView" class="view">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 24px;">
+                        <div>
+                            <h1>Configuración Backoffice</h1>
+                            <p class="subtitle" style="margin-bottom:0;">Gestión dinámica de personal operativo y directorio empresarial.</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="abrirModalTech()">➕ Agregar Técnico</button>
+                    </div>
+
+                    <div class="table-container">
+                        <table id="tablaDirectorio">
+                            <thead><tr><th>Especialista</th><th>Perfil</th><th>WhatsApp</th><th style="width:160px;">Gestión</th></tr></thead>
+                            <tbody></tbody>
                         </table>
                     </div>
                 </div>
@@ -332,141 +471,209 @@
     </div>
 
     <script>
-        // BASE DE DATOS DE USUARIOS HOMOLOGADOS [cite: 326-331]
+        // MODO OSCURO
+        function initTheme() {
+            const savedTheme = localStorage.getItem('vexorTheme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            updateThemeIcon(savedTheme);
+        }
+        function toggleTheme() {
+            const newTheme = document.documentElement.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+            document.documentElement.setAttribute('data-theme', newTheme);
+            localStorage.setItem('vexorTheme', newTheme);
+            updateThemeIcon(newTheme);
+        }
+        function updateThemeIcon(theme) {
+            const icon = document.getElementById('theme-icon');
+            icon.innerHTML = theme === 'dark' 
+                ? '<path d="M12 3c.132 0 .263 0 .393 0a7.5 7.5 0 0 0 7.92 12.446a9 9 0 1 1-8.313-12.454z"/>' 
+                : '<path d="M12 7c-2.76 0-5 2.24-5 5s2.24 5 5 5 5-2.24 5-5-2.24-5-5-5zM2 13h2c.55 0 1-.45 1-1s-.45-1-1-1H2c-.55 0-1 .45-1 1s.45 1 1 1zm18 0h2c.55 0 1-.45 1-1s-.45-1-1-1h-2c-.55 0-1 .45-1 1s.45 1 1 1zM11 2v2c0 .55.45 1 1 1s1-.45 1-1V2c0-.55-.45-1-1-1s-1 .45-1 1zm0 18v2c0 .55.45 1 1 1s1-.45 1-1v-2c0-.55-.45-1-1-1s-1 .45-1 1zM5.99 4.58a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0s.39-1.03 0-1.41L5.99 4.58zm12.37 12.37a.996.996 0 0 0-1.41 0 .996.996 0 0 0 0 1.41l1.06 1.06c.39.39 1.03.39 1.41 0a.996.996 0 0 0 0-1.41l-1.06-1.06zm1.06-10.96a.996.996 0 0 0 0-1.41.996.996 0 0 0-1.41 0l-1.06 1.06c-.39.39-.39 1.03 0 1.41s1.03.39 1.41 0l1.06-1.06zM7.05 18.36a.996.996 0 0 0 0 1.41.996.996 0 0 0 1.41 0l1.06-1.06c.39-.39.39-1.03 0-1.41s-1.03-.39-1.41 0l-1.06 1.06z"/>';
+        }
+        initTheme();
+
+        // BASE DE DATOS Y ESTADOS
         const usuariosDB = {
-            "julio": { nombre: "Julio Humberto Vera Palacios", rol: "Gerente General / Administrador", pass: "123", init: "JV" },
-            "bryam": { nombre: "Bryam Alexander Benites Huaylla", rol: "Especialista Técnico / Usuario", pass: "123", init: "BH" },
-            "angelo": { nombre: "Angelo Andrey Chirinos Tello", rol: "Especialista Técnico / Usuario", pass: "123", init: "AT" }
+            "julio": { nombre: "Julio Vera Palacios", rol: "Gerente General / Administrador", pass: "123", init: "JV" },
+            "bryam": { nombre: "Bryam Benites", rol: "Especialista TI N2", pass: "123", init: "BB" },
+            "angelo": { nombre: "Angelo Chirinos", rol: "Especialista TI N1", pass: "123", init: "AC" },
+            "ricardo": { nombre: "Ricardo", rol: "Atención Cliente", pass: "123", init: "RC" }
         };
 
-        // INTEGRACIÓN DE ACTIVOS OFICIALES DE LA CMDB [cite: 322-325]
-        const activosCMDB = [
-            { id: "CI-01", tipo: "PC Administrativa", marca: "Lenovo", mod: "ThinkCentre / Core i5 / 8 GB", cant: "1", est: "Operativo", resp: "Coordinador", ub: "Recepción" },
-            { id: "CI-02", tipo: "PC Banco de Pruebas", marca: "Ensamblada", mod: "Core i5 4ta gen. / 8 GB / 240 GB", cant: "1", est: "Por mejorar", resp: "Técnico N2", ub: "Taller" },
-            { id: "CI-03", tipo: "Laptop Técnica", marca: "Lenovo", mod: "IdeaPad i5 / 8 GB / 512 GB", cant: "1", est: "Operativo", resp: "Soporte campo", ub: "Taller / visitas" },
-            { id: "CI-04", tipo: "Laptop Técnica", marca: "HP", mod: "ProBook i5 / 8 GB / 256 GB", cant: "1", est: "Operativo", resp: "Mesa de ayuda", ub: "Recepción" },
-            { id: "CI-05", tipo: "Impresora Multifuncional", marca: "Epson", mod: "EcoTank L3250", cant: "1", est: "Operativo", resp: "Mesa de ayuda", ub: "Recepción" },
-            { id: "CI-06", tipo: "Router Gateway", marca: "TP-Link", mod: "Archer C6 AC1200", cant: "1", est: "Operativo", resp: "Redes", ub: "Red interna" },
-            { id: "CI-07", tipo: "Switch de Distribución", marca: "TP-Link", mod: "TL-SG108 / 8 puertos", cant: "1", est: "Operativo", resp: "Redes", ub: "Taller" },
-            { id: "CI-08", tipo: "Sistema UPS", marca: "Forza", mod: "NT-751 / 750 VA", cant: "1", est: "Operativo", resp: "Coordinador", ub: "Recepción" }
+        const defaultTecnicos = [
+            { nombre: "Julio Vera Palacios", perfil: "Gerencia / Soporte N3", numero: "51900375447" },
+            { nombre: "Angelo Chirinos", perfil: "Soporte N1", numero: "51915945401" },
+            { nombre: "Bryam Benites", perfil: "Soporte N2", numero: "51916267266" },
+            { nombre: "Ricardo", perfil: "Atención Cliente", numero: "51919445094" }
         ];
+        let directorioTecnicos = JSON.parse(localStorage.getItem('vexorDirectorio')) || defaultTecnicos;
+
+        const defaultCMDB = [
+            { tipo: "PC Administrativa", marca: "Lenovo", mod: "ThinkCentre i5", cant: "1", est: "Operativo", resp: "Admin", ub: "Recepción" },
+            { tipo: "Laptop Operativa", marca: "ASUS", mod: "TUF Gaming F15", cant: "1", est: "Operativo", resp: "Soporte", ub: "Taller" },
+            { tipo: "Router Gateway", marca: "TP-Link", mod: "Archer C6", cant: "1", est: "Operativo", resp: "Redes", ub: "Nodo" }
+        ];
+        let activosCMDB = JSON.parse(localStorage.getItem('vexorCMDB')) || defaultCMDB;
 
         let tickets = JSON.parse(localStorage.getItem('vexorTickets')) || [];
         let usuarioActual = null;
 
-        // DICCIONARIO DE CONOCIMIENTO (LA IA EXTENDIDA)
-        // Se utilizan "raíces de palabras" (ej: 'instal', 'descarg') para cazar variaciones
-        const matrizConocimientoIA = [
-            {
-                categoria: "Gestión de Accesos y Aplicativos",
-                palabrasClave: ["app", "correo", "electronic", "gmail", "outlook", "contraseña", "clave", "instal", "descarg", "cuenta", "acceso", "login", "entrar", "aplicacion", "software", "zoom", "teams", "olvide"],
-                prioridadCalculada: "Media",
-                tecnicoSugerido: "Carlos Quispe",
-                diagnostico: "Incidente de autenticación o requerimiento de despliegue de software. La Mesa de Ayuda procederá con el restablecimiento de credenciales o la ejecución del instalador del aplicativo.",
-                tags: ["Software", "Cuentas y Accesos", "Soporte N1"]
-            },
-            {
-                categoria: "Sistemas de Respaldo Eléctrico",
-                palabrasClave: ["ups", "energia", "forza", "bateria", "no enciende", "corte", "luz", "falla electrica", "corriente", "quemado", "apaga", "apagon"],
-                prioridadCalculada: "Alta",
-                tecnicoSugerido: "Rosa Llanos",
-                diagnostico: "Alerta crítica de infraestructura eléctrica. Falla detectada en el suministro o componentes internos. Requiere aislamiento físico inmediato y diagnóstico N2.",
-                tags: ["Hardware", "Riesgo Eléctrico", "Taller N2"]
-            },
-            {
-                categoria: "Periféricos e Impresión",
-                palabrasClave: ["impresora", "epson", "ecotank", "atascado", "hoja", "tinta", "no imprime", "mancha", "rodillo", "mecanico", "papel", "atasco"],
-                prioridadCalculada: "Media",
-                tecnicoSugerido: "Kevin Torres",
-                diagnostico: "Incidente en periférico de salida. Posible obstrucción mecánica o descalibración de cabezales. Proceder con purga lógica y alineación de inyectores.",
-                tags: ["Periféricos", "Mecánica", "Nivel Especialista"]
-            },
-            {
-                categoria: "Infraestructura de Red",
-                palabrasClave: ["internet", "wifi", "wi-fi", "red", "switch", "router", "tp-link", "cable", "rj45", "lan", "linea", "ping", "lento", "desconectado", "sin señal"],
-                prioridadCalculada: "Alta",
-                tecnicoSugerido: "Kevin Torres",
-                diagnostico: "Degradación en conectividad estructural. Requiere revisión de Gateway o Switch de distribución, mapeo IP e inspección física de cableado.",
-                tags: ["Redes", "Conectividad", "Soporte Campo"]
-            },
-            {
-                categoria: "Infecciones Lógicas y SO",
-                palabrasClave: ["virus", "malware", "lenta", "pantalla azul", "windows", "formatear", "activar", "congelado", "traba", "formateo", "lentitud"],
-                prioridadCalculada: "Media",
-                tecnicoSugerido: "Carlos Quispe",
-                diagnostico: "Corrupción del sistema de archivos o presencia de agentes maliciosos. Requiere escaneo con Bitdefender, optimización de registros o reinstalación limpia (Formateo).",
-                tags: ["Sistema Operativo", "Seguridad", "Mesa N1"]
-            },
-            {
-                categoria: "Mantenimientos Preventivos",
-                palabrasClave: ["mantenimiento", "limpieza", "preventivo", "polvo", "pasta termica", "ruido", "ventilador", "calienta", "soplar", "recalienta", "temperatura"],
-                prioridadCalculada: "Baja",
-                tecnicoSugerido: "Lucía Palomino",
-                diagnostico: "Rutina preventiva estándar. Requiere remoción de sedimentos por presión de aire comprimido y posible sustitución de compuesto térmico.",
-                tags: ["Mantenimiento", "Prevención", "Atención Mostrador"]
-            }
-        ];
-
+        // INICIALIZACIÓN
         function inicializarComponentesFormulario() {
             const selectEquipo = document.getElementById('equipo');
             selectEquipo.innerHTML = activosCMDB.map(a => `<option value="${a.marca} ${a.mod}">${a.tipo} - ${a.marca} (${a.mod})</option>`).join('');
+            const selectTecnico = document.getElementById('tecnico');
+            selectTecnico.innerHTML = directorioTecnicos.map(t => `<option value="${t.nombre}">${t.nombre} (${t.perfil})</option>`).join('');
         }
 
-        // ALGORITMO INTEGRAL DE INTELIGENCIA ARTIFICIAL POR CONTEO DE VECTORES SEMÁNTICOS
+        // FUNCIONES GLOBALES DE MODALES
+        function cerrarModal(id) { document.getElementById(id).classList.remove('active'); }
+
+        // CRUD TÉCNICOS BACKOFFICE
+        function abrirModalTech(index = -1) {
+            document.getElementById('editTechIndex').value = index;
+            if(index >= 0) {
+                const t = directorioTecnicos[index];
+                document.getElementById('nuevoNomTecnico').value = t.nombre;
+                document.getElementById('nuevoPerfilTecnico').value = t.perfil;
+                document.getElementById('nuevoNumTecnico').value = t.numero;
+                document.getElementById('modalTechTitle').innerText = "Editar Técnico";
+            } else {
+                document.getElementById('editTechForm').reset();
+                document.getElementById('modalTechTitle').innerText = "Nuevo Técnico";
+            }
+            document.getElementById('modalTech').classList.add('active');
+        }
+
+        document.getElementById('editTechForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idx = parseInt(document.getElementById('editTechIndex').value);
+            const tecData = {
+                nombre: document.getElementById('nuevoNomTecnico').value.trim(),
+                perfil: document.getElementById('nuevoPerfilTecnico').value.trim(),
+                numero: document.getElementById('nuevoNumTecnico').value.replace(/\D/g,'')
+            };
+            if(idx >= 0) { directorioTecnicos[idx] = tecData; } else { directorioTecnicos.push(tecData); }
+            localStorage.setItem('vexorDirectorio', JSON.stringify(directorioTecnicos));
+            cerrarModal('modalTech'); inicializarComponentesFormulario(); renderizarTablaDirectorio();
+        });
+
+        function eliminarTecnico(index) {
+            if(confirm("¿Seguro que deseas eliminar a este especialista?")) {
+                directorioTecnicos.splice(index, 1);
+                localStorage.setItem('vexorDirectorio', JSON.stringify(directorioTecnicos));
+                inicializarComponentesFormulario(); renderizarTablaDirectorio();
+            }
+        }
+
+        function renderizarTablaDirectorio() {
+            const tbody = document.querySelector('#tablaDirectorio tbody');
+            tbody.innerHTML = '';
+            directorioTecnicos.forEach((t, i) => {
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:700;">${t.nombre}</td><td>${t.perfil}</td>
+                        <td><a href="https://wa.me/${t.numero}" target="_blank" style="color:var(--whatsapp); text-decoration:none; font-weight:700;">+${t.numero}</a></td>
+                        <td>
+                            <button onclick="abrirModalTech(${i})" class="btn btn-outline" style="padding:6px 12px; display:inline-block; margin-right:6px;">Editar</button>
+                            <button onclick="eliminarTecnico(${i})" class="btn btn-danger" style="padding:6px 12px; display:inline-block;">Eliminar</button>
+                        </td>
+                    </tr>`;
+            });
+        }
+
+        // CRUD CMDB
+        function abrirModalCMDB(index = -1) {
+            document.getElementById('cmdbIndex').value = index;
+            if(index >= 0) {
+                const a = activosCMDB[index];
+                document.getElementById('cmdbTipo').value = a.tipo; document.getElementById('cmdbMarca').value = a.marca;
+                document.getElementById('cmdbMod').value = a.mod; document.getElementById('cmdbResp').value = a.resp;
+                document.getElementById('cmdbUb').value = a.ub;
+                document.getElementById('cmdbModalTitle').innerText = "Editar Activo CMDB";
+            } else {
+                document.getElementById('cmdbForm').reset();
+                document.getElementById('cmdbModalTitle').innerText = "Nuevo Activo CMDB";
+            }
+            document.getElementById('modalCMDB').classList.add('active');
+        }
+
+        document.getElementById('cmdbForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idx = parseInt(document.getElementById('cmdbIndex').value);
+            const data = {
+                tipo: document.getElementById('cmdbTipo').value, marca: document.getElementById('cmdbMarca').value,
+                mod: document.getElementById('cmdbMod').value, cant: "1", est: "Operativo",
+                resp: document.getElementById('cmdbResp').value, ub: document.getElementById('cmdbUb').value
+            };
+            if(idx >= 0) activosCMDB[idx] = data; else activosCMDB.push(data);
+            localStorage.setItem('vexorCMDB', JSON.stringify(activosCMDB));
+            cerrarModal('modalCMDB'); inicializarComponentesFormulario(); renderizarCMDBAdmin();
+        });
+
+        function eliminarCMDB(index) {
+            if(confirm("¿Eliminar este equipo del inventario de VEXOR?")) {
+                activosCMDB.splice(index, 1);
+                localStorage.setItem('vexorCMDB', JSON.stringify(activosCMDB));
+                inicializarComponentesFormulario(); renderizarCMDBAdmin();
+            }
+        }
+
+        function renderizarCMDBAdmin() {
+            const tbody = document.querySelector('#tablaCMDBMain tbody');
+            tbody.innerHTML = '';
+            let isGerente = usuarioActual && usuarioActual.rol.includes("Administrador");
+            activosCMDB.forEach((a, i) => {
+                let actionBtn = isGerente ? `<button onclick="abrirModalCMDB(${i})" class="btn btn-outline" style="padding:6px 10px; display:inline-block; margin-right:6px;">Editar</button><button onclick="eliminarCMDB(${i})" class="btn btn-danger" style="padding:6px 10px; display:inline-block;">Eliminar</button>` : '<span>---</span>';
+                tbody.innerHTML += `
+                    <tr>
+                        <td style="font-weight:700;">${a.tipo}</td><td>${a.marca}</td><td>${a.mod}</td><td>${a.cant}</td>
+                        <td><span class="badge badge-baja">${a.est}</span></td><td>${a.ub}</td>
+                        <td class="no-print">${actionBtn}</td>
+                    </tr>`;
+            });
+        }
+
+        // IA CORTEX
+        const matrizConocimientoIA = [
+            { categoria: "Gestión Lógica y Accesos", palabrasClave: ["app", "correo", "electronic", "gmail", "outlook", "contraseña", "clave", "instal", "cuenta", "login", "software"], prioridadCalculada: "Media", tags: ["Software", "Soporte N1"] },
+            { categoria: "Infraestructura Eléctrica Crítica", palabrasClave: ["ups", "energia", "forza", "bateria", "no enciende", "corte", "falla electrica", "quemado", "apaga"], prioridadCalculada: "Alta", tags: ["Hardware", "Taller N2"] },
+            { categoria: "Hardware y Periféricos", palabrasClave: ["impresora", "epson", "ecotank", "atascado", "hoja", "tinta", "no imprime", "pantalla", "teclado", "asus"], prioridadCalculada: "Media", tags: ["Periféricos", "Mecánica"] },
+            { categoria: "Telecomunicaciones y Redes", palabrasClave: ["internet", "wifi", "red", "switch", "router", "tp-link", "cable", "lan", "ping", "sin señal"], prioridadCalculada: "Alta", tags: ["Redes", "Soporte Campo"] },
+            { categoria: "Amenazas y Seguridad SO", palabrasClave: ["virus", "malware", "pantalla azul", "windows", "formatear", "congelado", "lento"], prioridadCalculada: "Media", tags: ["Sistema Operativo", "Mesa N1"] }
+        ];
+
         function ejecutarPrediccionIA() {
             const textoEntrada = document.getElementById('problema').value.toLowerCase().trim();
-            const prioridadSelect = document.getElementById('prioridad');
-            const tecnicoSelect = document.getElementById('tecnico');
-            const aiSuggestionLabel = document.getElementById('ai-suggestion');
-            const aiConfidenceLabel = document.getElementById('ai-confidence');
-            const aiTagsContainer = document.getElementById('ai-tags');
+            const pSel = document.getElementById('prioridad');
+            const aiSug = document.getElementById('ai-suggestion');
+            const aiConf = document.getElementById('ai-confidence');
+            const aiTags = document.getElementById('ai-tags');
 
             if (textoEntrada.length < 4) {
-                aiSuggestionLabel.innerText = "Esperando cadena de entrada lógica...";
-                aiConfidenceLabel.innerText = "CONFIDENCIA: 0%";
-                aiTagsContainer.innerHTML = "";
-                return;
+                aiSug.innerText = "Esperando entrada de datos estructurados...";
+                aiConf.innerText = "PRECISIÓN: 0%"; aiTags.innerHTML = ""; return;
             }
-
-            let mejorCategoria = null;
-            let scoreMaximo = 0;
-
-            matrizConocimientoIA.forEach(categoriaObj => {
-                let scoreActual = 0;
-                categoriaObj.palabrasClave.forEach(palabra => {
-                    if (textoEntrada.includes(palabra)) {
-                        scoreActual += 10;
-                    }
-                });
-                if (scoreActual > scoreMaximo) {
-                    scoreMaximo = scoreActual;
-                    mejorCategoria = categoriaObj;
-                }
+            let best = null, maxScore = 0;
+            matrizConocimientoIA.forEach(c => {
+                let score = 0; c.palabrasClave.forEach(p => { if (textoEntrada.includes(p)) score += 15; });
+                if (score > maxScore) { maxScore = score; best = c; }
             });
-
-            if (mejorCategoria && scoreMaximo > 0) {
-                let palabrasDetectadas = mejorCategoria.palabrasClave.filter(p => textoEntrada.includes(p)).length;
-                let confianzaCalculada = Math.min(45 + (palabrasDetectadas * 20), 98);
-
-                prioridadSelect.value = mejorCategoria.prioridadCalculada;
-                tecnicoSelect.value = mejorCategoria.tecnicoSugerido;
-                aiSuggestionLabel.innerHTML = `<strong>[${mejorCategoria.categoria}]</strong> ${mejorCategoria.diagnostico}`;
-                aiConfidenceLabel.innerText = `CONFIDENCIA: ${confianzaCalculada}%`;
-                aiConfidenceLabel.style.background = confianzaCalculada > 70 ? "#d1fae5" : "#f3e8ff";
-                aiConfidenceLabel.style.color = confianzaCalculada > 70 ? "#065f46" : "#7c3aed";
-
-                aiTagsContainer.innerHTML = mejorCategoria.tags.map(t => `<span class="ai-pill">${t}</span>`).join('');
+            if (best && maxScore > 0) {
+                let hits = best.palabrasClave.filter(p => textoEntrada.includes(p)).length;
+                let conf = Math.min(50 + (hits * 18), 99);
+                pSel.value = best.prioridadCalculada;
+                aiSug.innerHTML = `<strong>[${best.categoria}]</strong> Patrón detectado. Sugerimos revisión orientada.`;
+                aiConf.innerText = `PRECISIÓN: ${conf}%`;
+                aiTags.innerHTML = best.tags.map(t => `<span class="ai-pill">${t}</span>`).join('');
             } else {
-                prioridadSelect.value = "Media";
-                tecnicoSelect.value = "Carlos Quispe";
-                aiSuggestionLabel.innerText = "Incidente de ambigüedad léxica. Procesando mediante protocolo genérico ordinario de clasificación de la Mesa de Ayuda.";
-                aiConfidenceLabel.innerText = "CONFIDENCIA: 35% (Incertidumbre)";
-                aiConfidenceLabel.style.background = "#fee2e2";
-                aiConfidenceLabel.style.color = "#991b1b";
-                aiTagsContainer.innerHTML = `<span class="ai-pill" style="background:#f1f5f9; color:#475569;">Triage Estándar</span>`;
+                pSel.value = "Media";
+                aiSug.innerText = "Ambigüedad léxica. Procesando por Triage Manual.";
+                aiConf.innerText = "INCERTIDUMBRE";
+                aiTags.innerHTML = `<span class="ai-pill">Genérico</span>`;
             }
         }
 
+        // LOGIN Y SISTEMA CORE
         document.getElementById('loginForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const userIn = document.getElementById('username').value.toLowerCase().trim();
@@ -479,17 +686,15 @@
                 
                 document.getElementById('userFullName').innerText = usuarioActual.nombre;
                 document.getElementById('userInitial').innerText = usuarioActual.init;
-                document.getElementById('roleIndicator').innerText = "Rol: " + usuarioActual.rol;
+                document.getElementById('roleIndicator').innerText = "Perfil: " + usuarioActual.rol;
 
-                let isGerente = usuarioActual.rol === "Gerente General / Administrador";
+                let isGerente = usuarioActual.rol.includes("Administrador");
                 document.getElementById('cmdbMenuBtn').style.display = isGerente ? 'flex' : 'none';
+                document.getElementById('configMenuBtn').style.display = isGerente ? 'flex' : 'none';
                 document.getElementById('adminActions').style.display = isGerente ? 'flex' : 'none';
 
-                inicializarComponentesFormulario();
-                switchView('dashboard');
-            } else {
-                alert('Credenciales inválidas para la infraestructura VEXOR.');
-            }
+                inicializarComponentesFormulario(); switchView('dashboard');
+            } else { alert('Denegado: Credenciales inválidas.'); }
         });
 
         function logout() {
@@ -502,34 +707,26 @@
         function switchView(viewId) {
             document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
             document.querySelectorAll('.menu-btn').forEach(b => b.classList.remove('active'));
-            
             document.getElementById(viewId).classList.add('active');
             if(event && event.currentTarget) event.currentTarget.classList.add('active');
-
+            
             if(viewId === 'dashboard') actualizarDashboard();
             if(viewId === 'listaTickets') renderizarTabla(tickets);
-            if(viewId === 'cmdbView') cargarCMDB();
+            if(viewId === 'cmdbView') renderizarCMDBAdmin();
+            if(viewId === 'configView') renderizarTablaDirectorio();
         }
 
         document.getElementById('ticketForm').addEventListener('submit', function(e) {
             e.preventDefault();
             const nuevoTicket = {
                 id: 'INC-' + Math.floor(Math.random() * 10000).toString().padStart(4, '0'),
-                cliente: document.getElementById('cliente').value,
-                equipo: document.getElementById('equipo').value,
-                problema: document.getElementById('problema').value,
-                prioridad: document.getElementById('prioridad').value,
-                tecnico: document.getElementById('tecnico').value,
-                estado: 'Pendiente'
+                cliente: document.getElementById('cliente').value, equipo: document.getElementById('equipo').value,
+                problema: document.getElementById('problema').value, prioridad: document.getElementById('prioridad').value,
+                tecnico: document.getElementById('tecnico').value, estado: 'Pendiente', notaResolucion: ''
             };
             tickets.push(nuevoTicket);
             localStorage.setItem('vexorTickets', JSON.stringify(tickets));
-            this.reset();
-            document.getElementById('ai-suggestion').innerText = "Esperando cadena de entrada lógica...";
-            document.getElementById('ai-confidence').innerText = "CONFIDENCIA: 0%";
-            document.getElementById('ai-tags').innerHTML = "";
-            alert('Incidente registrado de manera de forma persistente con validación IA Cortex.');
-            switchView('listaTickets');
+            this.reset(); alert('Ticket registrado y SLA iniciado.'); switchView('listaTickets');
         });
 
         function renderizarTabla(datos) {
@@ -538,120 +735,88 @@
             datos.forEach((t) => {
                 let pClass = t.prioridad === 'Alta' ? 'badge-alta' : (t.prioridad === 'Media' ? 'badge-media' : 'badge-baja');
                 let sClass = t.estado === 'Pendiente' ? 'badge-pending' : 'badge-resolved';
-                let btn = t.estado === 'Pendiente' 
-                    ? `<button onclick="resolverTicket('${t.id}')" class="btn btn-outline" style="padding:4px 8px; font-size:12px;">Marcar Cerrado</button>`
-                    : '<span style="color:#10b981; font-weight:700;">✔ Clausurado</span>';
+                
+                // Integración Avanzada WhatsApp
+                let tecnicoDir = directorioTecnicos.find(tec => tec.nombre === t.tecnico);
+                let numWhatsApp = tecnicoDir ? tecnicoDir.numero : ''; 
+                let textWA = encodeURIComponent(`🚨 *VEXOR ITSM - Nuevo Ticket*\n\n*ID:* ${t.id}\n*Prioridad:* ${t.prioridad}\n*Cliente:* ${t.cliente}\n*Equipo:* ${t.equipo}\n*Falla reportada:* ${t.problema}`);
+                let linkWA = numWhatsApp ? `https://api.whatsapp.com/send?phone=${numWhatsApp}&text=${textWA}` : `https://api.whatsapp.com/send?text=${textWA}`;
+
+                let btnWha = t.estado === 'Pendiente' ? `<a href="${linkWA}" target="_blank" class="btn btn-whatsapp" style="padding:6px 10px; font-size:12px; border-radius:8px; margin-right:4px; text-decoration:none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="white"><path d="M12.01 2.01c-5.52 0-9.99 4.47-9.99 9.99 0 1.96.51 3.82 1.41 5.43L2 22l4.73-1.24c1.55.8 3.32 1.24 5.27 1.24 5.52 0 9.99-4.47 9.99-9.99s-4.47-9.99-9.98-9.99zm-4.3 6.94c.18-.39.38-.4.57-.4h.41c.21 0 .54.08.83.47.28.39.95 1.05 1.06 1.27.11.22.14.47.03.7s-.17.39-.33.56c-.16.17-.35.39-.49.53-.17.17-.34.36-.14.67.2.32.89 1.43 1.89 2.22 1.29 1.02 2.37 1.33 2.68 1.48.32.15.5.12.69-.08.18-.21.8-1.02 1.01-1.37.21-.35.43-.29.73-.18.3.11 1.91.9 2.23 1.06.33.15.54.23.62.36.08.13.08.76-.23 1.5-.32.73-1.85 1.41-2.58 1.45-.73.04-1.63.15-5.32-2.15-3.69-2.3-6.09-6.3-6.28-6.53-.18-.23-1.49-1.99-1.49-3.79 0-1.8.94-2.74 1.28-3.1.33-.35.71-.43.94-.43z"/></svg> Notificar</a>` : '';
+                let btnClose = t.estado === 'Pendiente' ? `<button onclick="abrirCierre('${t.id}')" class="btn btn-primary" style="padding:6px 10px; font-size:12px; border-radius:8px;">Resolver</button>` : `<span style="color:var(--success); font-weight:800;">OK</span>`;
+                let infoNota = t.notaResolucion ? `<span class="resolution-note">↳ ${t.notaResolucion}</span>` : '';
+
                 tbody.innerHTML += `
                     <tr>
-                        <td><strong>${t.id}</strong></td>
-                        <td>${t.cliente}</td>
+                        <td style="color:var(--primary); font-weight:800;">${t.id}</td>
+                        <td style="font-weight:700;">${t.cliente}</td>
                         <td>${t.equipo}</td>
                         <td><span class="badge ${pClass}">${t.prioridad}</span></td>
                         <td>${t.tecnico.split(' ')[0]}</td>
-                        <td><span class="badge ${sClass}">${t.estado}</span></td>
-                        <td class="no-print">${btn}</td>
+                        <td><span class="badge ${sClass}">${t.estado}</span>${infoNota}</td>
+                        <td class="no-print" style="display:flex; align-items:center;">${btnWha}${btnClose}</td>
                     </tr>`;
             });
         }
 
-        function resolverTicket(id) {
-            let target = tickets.find(t => t.id === id);
-            if(target) {
-                target.estado = 'Resuelto';
-                localStorage.setItem('vexorTickets', JSON.stringify(tickets));
-                renderizarTabla(tickets);
-                actualizarDashboard();
+        function abrirCierre(id) {
+            let nota = prompt("Registro KEDB: Documente la solución aplicada:");
+            if(nota !== null) {
+                let target = tickets.find(t => t.id === id);
+                if(target) {
+                    target.estado = 'Resuelto'; target.notaResolucion = nota;
+                    localStorage.setItem('vexorTickets', JSON.stringify(tickets)); renderizarTabla(tickets); actualizarDashboard();
+                }
             }
         }
 
         function filtrarTickets() {
             let val = document.getElementById('searchBox').value.toLowerCase();
-            renderizarTabla(tickets.filter(t => t.cliente.toLowerCase().includes(val) || t.equipo.toLowerCase().includes(val)));
-        }
-
-        function cargarCMDB() {
-            const tbody = document.getElementById('cmdbTableBody');
-            tbody.innerHTML = activosCMDB.map(a => `
-                <tr>
-                    <td><strong>${a.tipo}</strong></td>
-                    <td>${a.marca}</td>
-                    <td>${a.mod}</td>
-                    <td>${a.cant}</td>
-                    <td><span class="badge badge-baja">${a.est}</span></td>
-                    <td>${a.resp}</td>
-                    <td>${a.ub}</td>
-                </tr>`).join('');
+            renderizarTabla(tickets.filter(t => t.cliente.toLowerCase().includes(val) || t.id.toLowerCase().includes(val)));
         }
 
         function actualizarDashboard() {
             document.getElementById('kpi-total').innerText = tickets.length;
             document.getElementById('kpi-pendientes').innerText = tickets.filter(t => t.estado === 'Pendiente').length;
             document.getElementById('kpi-resueltos').innerText = tickets.filter(t => t.estado === 'Resuelto').length;
-
             const pChart = document.getElementById('priority-chart');
             pChart.innerHTML = ['Alta', 'Media', 'Baja'].map(p => {
                 let count = tickets.filter(t => t.prioridad === p).length;
                 let pct = tickets.length > 0 ? (count / tickets.length) * 100 : 0;
-                return `
-                    <div class="bar-row">
-                        <div class="bar-label">${p}</div>
-                        <div class="bar-track"><div class="bar-fill" style="width: ${pct}%; background-color: ${p==='Alta'?'#ef4444':p==='Media'?'#f59e0b':'#10b981'}"></div></div>
-                        <div class="bar-value">${count}</div>
-                    </div>`;
+                let color = p === 'Alta' ? 'var(--danger)' : (p === 'Media' ? 'var(--warning)' : 'var(--success)');
+                return `<div class="bar-row"><div class="bar-label">${p}</div><div class="bar-track"><div class="bar-fill" style="width: ${pct}%; background-color: ${color};"></div></div><div class="bar-value">${count}</div></div>`;
             }).join('');
-
             const tChart = document.getElementById('tech-chart');
-            tChart.innerHTML = ['Carlos Quispe', 'Rosa Llanos', 'Kevin Torres', 'Lucía Palomino'].map(tech => {
-                let count = tickets.filter(t => t.tecnico === tech).length;
+            tChart.innerHTML = directorioTecnicos.map(tech => {
+                let count = tickets.filter(t => t.tecnico === tech.nombre).length;
                 let pct = tickets.length > 0 ? (count / tickets.length) * 100 : 0;
-                return `
-                    <div class="bar-row">
-                        <div class="bar-label">${tech.split(' ')[0]}</div>
-                        <div class="bar-track"><div class="bar-fill" style="width: ${pct}%;"></div></div>
-                        <div class="bar-value">${count}</div>
-                    </div>`;
+                return `<div class="bar-row"><div class="bar-label">${tech.nombre.split(' ')[0]}</div><div class="bar-track"><div class="bar-fill" style="width: ${pct}%; background-color: var(--primary);"></div></div><div class="bar-value">${count}</div></div>`;
             }).join('');
         }
 
-        function exportarExcel() {
-            if(tickets.length === 0) return alert('Sin registros.');
-            let csv = "\uFEFFID,Usuario,Activo,Problema,Prioridad,Tecnico,Estado\n" + tickets.map(t => 
-                `"${t.id}","${t.cliente}","${t.equipo}","${t.problema}","${t.prioridad}","${t.tecnico}","${t.estado}"`).join('\n');
-            let a = document.createElement('a');
-            a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' }));
-            a.download = 'MESA_SERVICIOS_VEXOR.csv';
-            a.click();
+        function exportarJSON() {
+            if(tickets.length === 0) return alert('Matriz vacía.');
+            let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tickets)); a.download = "BACKUP_VEXOR.json"; a.click();
         }
-
-        function generarPDF() {
-            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-            html2pdf().set({ margin: 12, filename: 'MESA_AYUDA_VEXOR.pdf', jsPDF: { orientation: 'landscape', format: 'a4' } })
-            .from(document.getElementById('printArea')).save().then(() => {
-                document.querySelectorAll('.no-print').forEach(el => el.style.display = '');
-            });
-        }
-
-        function importarCSV() {
-            const file = document.getElementById('csvFileInput').files[0];
+        function importarJSON() {
+            const file = document.getElementById('jsonFileInput').files[0];
             if (!file) return;
             const reader = new FileReader();
             reader.onload = e => {
-                const lineas = e.target.result.split('\n');
-                let val = [];
-                for (let i = 1; i < lineas.length; i++) {
-                    if (lineas[i].trim() === '') continue;
-                    const c = lineas[i].split(',').map(x => x.replace(/^"|"$/g, '').trim());
-                    if (c.length >= 7) val.push({ id: c[0], cliente: c[1], equipo: c[2], problema: c[3], prioridad: c[4], tecnico: c[5], estado: c[6] });
-                }
-                if(val.length > 0) {
-                    tickets = val;
-                    localStorage.setItem('vexorTickets', JSON.stringify(tickets));
-                    renderizarTabla(tickets);
-                    actualizarDashboard();
-                    alert('Sincronización de Base de Datos Exitosa.');
-                }
-            };
-            reader.readAsText(file, 'UTF-8');
+                try {
+                    let data = JSON.parse(e.target.result);
+                    if(Array.isArray(data)) { tickets = data; localStorage.setItem('vexorTickets', JSON.stringify(tickets)); renderizarTabla(tickets); actualizarDashboard(); alert('Backup restaurado.'); }
+                } catch(err) { alert('Archivo inválido.'); }
+            }; reader.readAsText(file);
+        }
+        function exportarExcel() {
+            if(tickets.length === 0) return alert('Matriz vacía.');
+            let csv = "\uFEFFID,CLIENTE,EQUIPO,SINTOMA,SLA,TECNICO,STATUS,NOTA\n" + tickets.map(t => `"${t.id}","${t.cliente}","${t.equipo}","${t.problema}","${t.prioridad}","${t.tecnico}","${t.estado}","${t.notaResolucion || ''}"`).join('\n');
+            let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); a.download = 'AUDITORIA_VEXOR.csv'; a.click();
+        }
+        function generarPDF() {
+            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
+            html2pdf().set({ margin: 15, filename: 'REPORTE_VEXOR.pdf', jsPDF: { orientation: 'landscape' } }).from(document.getElementById('printArea')).save().then(() => { document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); });
         }
     </script>
 </body>
