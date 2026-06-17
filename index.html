@@ -4,11 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>VEXOR - Omnichannel ITSM</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         /* SISTEMA DE VARIABLES DINÁMICAS (TEMA CLARO) */
@@ -47,8 +42,8 @@
             --glass-bg: rgba(30, 41, 59, 0.6);
         }
 
-        /* RESETEO GLOBAL Y TIPOGRAFÍA 'INTER' */
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Inter', system-ui, -apple-system, sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
+        /* RESETEO GLOBAL Y TIPOGRAFÍA NATIVA (100% OFFLINE) */
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Oxygen-Sans, Ubuntu, Cantarell, "Helvetica Neue", sans-serif; transition: background-color 0.3s ease, border-color 0.3s ease; }
         body { background-color: var(--bg-body); color: var(--text-main); overflow: hidden; height: 100vh; display: flex; -webkit-font-smoothing: antialiased; }
         
         /* SCROLLBAR INVISIBLE/ELEGANTE */
@@ -56,9 +51,9 @@
         ::-webkit-scrollbar-track { background: transparent; }
         ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
         
-        /* LOGIN PREMIUM CON GLASSMORPHISM Y FONDO ABSTRACTO */
-        #login-screen { position: fixed; inset: 0; background: url('https://images.unsplash.com/photo-1518770660439-4636190af475?q=80&w=2070&auto=format&fit=crop') center/cover; display: flex; align-items: center; justify-content: center; z-index: 9999; }
-        #login-screen::before { content: ''; position: absolute; inset: 0; background: linear-gradient(135deg, rgba(11, 17, 32, 0.9) 0%, rgba(30, 58, 138, 0.8) 100%); backdrop-filter: blur(10px); }
+        /* LOGIN PREMIUM 100% OFFLINE */
+        #login-screen { position: fixed; inset: 0; background: linear-gradient(135deg, #020617 0%, #1e3a8a 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; }
+        #login-screen::before { content: ''; position: absolute; inset: 0; background: radial-gradient(circle at center, rgba(37,99,235,0.2) 0%, transparent 70%); }
         .login-card { position: relative; background: rgba(255, 255, 255, 0.05); backdrop-filter: blur(24px); padding: 48px; border-radius: 24px; width: 100%; max-width: 440px; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.5); border: 1px solid rgba(255,255,255,0.1); }
         .login-header { text-align: center; margin-bottom: 36px; }
         
@@ -123,7 +118,7 @@
         .bar-fill { height: 100%; background-color: var(--primary); width: 0%; transition: width 1s cubic-bezier(0.4, 0, 0.2, 1); border-radius: 4px; }
         .bar-value { width: 30px; text-align: right; font-size: 14px; font-weight: 700; color: var(--text-main); }
 
-        /* VEXOR AI CORTEX PANEL (UI FUTURISTA) */
+        /* VEXOR AI CORTEX PANEL */
         .ai-panel { background: var(--bg-surface); border: 1px solid var(--purple-ai); padding: 24px; border-radius: 16px; margin-top: 16px; position: relative; overflow: hidden; box-shadow: 0 4px 20px rgba(139, 92, 246, 0.08); }
         .ai-panel::before { content:''; position:absolute; top:-50%; left:-50%; width:200%; height:200%; background: radial-gradient(circle, rgba(139,92,246,0.1) 0%, transparent 60%); z-index: 0; pointer-events: none; }
         .ai-content { position: relative; z-index: 1; }
@@ -181,7 +176,7 @@
         .role-indicator { background: rgba(37,99,235,0.1); color: var(--primary); padding: 8px 16px; border-radius: 20px; font-size: 13px; font-weight: 700; border: 1px solid rgba(37,99,235,0.2); }
         .user-avatar { width: 44px; height: 44px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white; border-radius: 14px; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 16px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); }
 
-        /* KNOWLEDGE BASE - DISEÑO GLASSMORPHISM & VECTORES */
+        /* KNOWLEDGE BASE */
         .kb-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr)); gap: 24px; }
         .kb-card { background: var(--glass-bg); backdrop-filter: blur(12px); border: 1px solid var(--border); padding: 32px; border-radius: 24px; box-shadow: var(--shadow-sm); transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); position: relative; overflow: hidden; }
         .kb-card:hover { transform: translateY(-8px); box-shadow: var(--shadow-hover); border-color: var(--primary); }
@@ -202,12 +197,41 @@
         .close-btn { background: transparent; border: none; font-size: 28px; color: var(--text-muted); cursor: pointer; line-height: 1; transition: 0.2s; }
         .close-btn:hover { color: var(--danger); }
 
-        @media print {
-            .sidebar, .top-bar, .toolbar, .no-print { display: none !important; }
+        /* =========================================
+           DISEÑO RESPONSIVO PARA CELULARES (MOBILE)
+           ========================================= */
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; height: auto; }
+            .sidebar { width: 100%; border-right: none; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+            .sidebar-header { height: 70px; padding: 10px; }
+            .company-logo { max-width: 140px; }
+            .nav-menu { flex-direction: row; overflow-x: auto; padding: 10px; gap: 8px; }
+            .menu-btn { width: auto; padding: 10px 14px; white-space: nowrap; font-size: 13px; }
             .main-content { overflow: visible; }
-            .view-container { padding: 0; overflow: visible; }
+            .top-bar { height: auto; padding: 15px 20px; flex-direction: column; gap: 15px; align-items: flex-start; }
+            .top-bar-right { width: 100%; justify-content: space-between; }
+            .view-container { padding: 20px; }
+            .form-panel { padding: 20px; }
+            .form-grid { grid-template-columns: 1fr; gap: 16px; } /* Formularios se apilan */
+            .dashboard-cards { grid-template-columns: 1fr; gap: 16px; }
+            .analytics-section { grid-template-columns: 1fr; gap: 16px; }
+            .toolbar { flex-direction: column; align-items: stretch; gap: 12px; padding: 16px; }
+            .search-filters input { max-width: 100%; }
+            .action-buttons { justify-content: center; }
+            .login-card { padding: 30px; margin: 20px; border-radius: 16px; }
+            h1 { font-size: 22px; }
+            .subtitle { font-size: 13px; margin-bottom: 20px; }
+        }
+
+        /* IMPRESIÓN NATIVA 100% OFFLINE */
+        @media print {
+            .sidebar, .top-bar, .toolbar, .no-print, .theme-toggle { display: none !important; }
+            body, .main-content, .view-container { overflow: visible !important; height: auto !important; background: white !important; color: black !important; }
             .view { display: block !important; }
-            table { border: 1px solid #cbd5e0; }
+            table { border: 1px solid #000; width: 100%; }
+            th, td { border: 1px solid #000; padding: 8px; color: black !important; }
+            .badge { border: 1px solid #000 !important; color: black !important; background: transparent !important; }
+            .resolution-note { color: #555 !important; }
         }
     </style>
 </head>
@@ -432,18 +456,18 @@
                             <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M16 7V3h-2v4h-4V3H8v4H6v7.5L9.5 18v3h5v-3l3.5-3.51V7h-2z"/></svg></div>
                             <h3>Reinicio Frío: UPS Forza</h3>
                             <p><strong>Causa Común:</strong> Sobrecarga estática o pico de tensión externa.</p>
-                            <p><strong>Triage N2:</strong> Desconectar periféricos. Mantener el botón de encendido presionado 15 segs sin conexión a red eléctrica.</p>
+                            <p><strong>Triage N2:</strong> Desconectar periféricos. Mantener el botón de encendido presionado 15 segs sin conexión.</p>
                         </div>
                         <div class="kb-card">
                             <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M12 3C7.95 3 4.21 4.34 1.2 6.6L3 9c2.5-1.9 5.8-3 9-3s6.5 1.1 9 3l1.8-2.4C19.79 4.34 16.05 3 12 3zm0 5C9.3 5 6.8 5.9 4.8 7.4L6.6 9.8c1.5-1.1 3.4-1.8 5.4-1.8s3.9.7 5.4 1.8l1.8-2.4C17.2 5.9 14.7 5 12 5zm0 5c-1.4 0-2.7.5-3.6 1.3L12 16l3.6-4.7c-.9-.8-2.2-1.3-3.6-1.3z"/></svg></div>
                             <h3>Segmentación Wi-Fi: TP-Link</h3>
                             <p><strong>Causa Común:</strong> Saturación del canal de 2.4GHz en área de recepción.</p>
-                            <p><strong>Triage N2:</strong> Acceder a la interfaz local. Separar SSIDs (2.4G y 5G). Activar el Aislamiento AP.</p>
+                            <p><strong>Triage N2:</strong> Acceder a interfaz local. Separar SSIDs (2.4G y 5G). Activar el Aislamiento AP.</p>
                         </div>
                         <div class="kb-card">
                             <div class="kb-icon-wrapper"><svg viewBox="0 0 24 24"><path d="M20 18c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2H4c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2H0v2h24v-2h-4zM4 6h16v10H4V6z"/></svg></div>
                             <h3>Thermal Throttling: ASUS TUF</h3>
-                            <p><strong>Causa Común:</strong> Desgaste de compuesto térmico en cargas altas.</p>
+                            <p><strong>Causa Común:</strong> Desgaste de compuesto térmico.</p>
                             <p><strong>Triage N2:</strong> Retirar chasis inferior. Aplicar aire comprimido en ductos y renovar pasta térmica en CPU/GPU.</p>
                         </div>
                     </div>
@@ -794,6 +818,7 @@
             }).join('');
         }
 
+        // 8. HERRAMIENTAS DE EXPORTACIÓN Y BACKUP NATIVAS
         function exportarJSON() {
             if(tickets.length === 0) return alert('Matriz vacía.');
             let a = document.createElement('a'); a.href = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(tickets)); a.download = "BACKUP_VEXOR.json"; a.click();
@@ -814,9 +839,10 @@
             let csv = "\uFEFFID,CLIENTE,EQUIPO,SINTOMA,SLA,TECNICO,STATUS,NOTA\n" + tickets.map(t => `"${t.id}","${t.cliente}","${t.equipo}","${t.problema}","${t.prioridad}","${t.tecnico}","${t.estado}","${t.notaResolucion || ''}"`).join('\n');
             let a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8;' })); a.download = 'AUDITORIA_VEXOR.csv'; a.click();
         }
+        
+        // IMPRESIÓN NATIVA (100% OFFLINE)
         function generarPDF() {
-            document.querySelectorAll('.no-print').forEach(el => el.style.display = 'none');
-            html2pdf().set({ margin: 15, filename: 'REPORTE_VEXOR.pdf', jsPDF: { orientation: 'landscape' } }).from(document.getElementById('printArea')).save().then(() => { document.querySelectorAll('.no-print').forEach(el => el.style.display = ''); });
+            window.print();
         }
     </script>
 </body>
